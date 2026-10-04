@@ -134,14 +134,21 @@ html.static .balnums, html.static .balnote, html.static #ballead, html.static #m
 @media (prefers-reduced-motion: reduce) { #sankey .link { transition: none; } }
 .scrollhint { display: none; font-size: 12px; color: var(--muted); margin: 0; }
 @media (max-width: 760px) { .scrollhint { display: block; } }
-.balnums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 24px; margin: 0; padding-top: 12px; border-top: 1px solid var(--line); }
+/* Number table: three columns of rows (swatch, label, value); sub-items indent under their total. */
+.balnums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px 28px; margin: 0; padding-top: 14px; border-top: 1px solid var(--line); }
 @media (max-width: 700px) { .balnums { grid-template-columns: minmax(0, 1fr); } }
-.balnums h3 { margin: 0 0 6px; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
-.balnums dl { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; font-variant-numeric: tabular-nums; }
-.balnums dt { color: var(--ink-2); display: flex; align-items: center; gap: 6px; }
-.balnums dt i { width: 10px; height: 10px; border-radius: 2px; flex: none; }
-.balnums dt i.striped { background: repeating-linear-gradient(45deg, var(--flow) 0 3px, var(--surface) 3px 5px); }
-.balnums dd { margin: 0; text-align: right; font-weight: 600; }
+.balnums h3 { margin: 0 0 2px; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.balnums h3 span { text-transform: none; letter-spacing: 0; font-weight: 500; }
+.balnums .r { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 0 8px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.balnums .r:last-child { border-bottom: 0; }
+.balnums .r i { width: 10px; height: 10px; border-radius: 2px; }
+.balnums .r i.striped { background: repeating-linear-gradient(45deg, var(--flow) 0 3px, var(--surface) 3px 5px); }
+.balnums .r span { color: var(--ink-2); line-height: 1.3; }
+.balnums .r small { display: block; font-size: 12px; color: var(--muted); }
+.balnums .r b { font-weight: 600; text-align: right; }
+.balnums .r.total span { color: var(--ink); font-weight: 600; }
+.balnums .r.total b { font-weight: 700; }
+.balnums .r.sub { padding-left: 16px; }
 .balnote { margin: 0; font-size: 12px; color: var(--muted); max-width: 95ch; }
 </style>
 </head>
@@ -609,14 +616,27 @@ function drawBalance() {
     `(<b>${mbd(B.crudeImports)}</b>), refineries run at <b>${share(B.processed, B.capacity)}</b> of capacity, and <b>${fmt(B.productExports)}</b> million tonnes of products a year go abroad, ` +
     `${share(topExp.v, B.productExports)} of it ${topExp.label.toLowerCase()}. LPG is the exception: imports cover <b>${share(B.used[0].fromImports, B.used[0].v)}</b> of the LPG India uses. ` +
     `Of India's own crude, <b>${share(B.domestic[0].v, B.domesticCrude)}</b> comes from ONGC.`;
-  const row = (fill, label, v) => `<dt>${fill ? `<i style="background:${fill}"></i>` : ""}${label}</dt><dd>${v}</dd>`;
+  // kind: "total" (a group's total), "sub" (indented under it) or "" (a plain row); swatch "striped" for the remainder.
+  const row = (swatch, label, v, kind = "", note = "") =>
+    `<div class="r ${kind}">${swatch === "striped" ? '<i class="striped"></i>' : swatch ? `<i style="background:${swatch}"></i>` : "<i></i>"}` +
+    `<span>${label}${note ? `<small>${note}</small>` : ""}</span><b>${v}</b></div>`;
+  const col = (title, rows) => `<div><h3>${title} <span>· million tonnes a year</span></h3>${rows}</div>`;
   $("balnums").innerHTML =
-    `<div><h3>Supply, MMT/yr</h3><dl>${row("var(--s1)", "Imported crude", `${fmt(B.crudeImports)} · ${mbd(B.crudeImports)}`)}${row("", "Domestic crude", `${fmt(B.domesticCrude)} · ${mbd(B.domesticCrude)}`)}` +
-      B.domestic.map((d) => row(`var(--${d.id})`, `&nbsp;&nbsp;${d.label}`, fmt(d.v))).join("") + `` +
-      B.imports.map((i) => row(color(i.id), `Imported ${i.id === "lpg" ? i.label : i.label.toLowerCase()}`, fmt(i.v))).join("") + `</dl></div>` +
-    `<div><h3>Refineries</h3><dl>${row("", "Crude processed", `${fmt(B.processed)} · ${mbd(B.processed)}`)}${row("", "Capacity", `${fmt(B.capacity)} · ${mbd(B.capacity)}`)}${row("", "Capacity in use", share(B.processed, B.capacity))}</dl></div>` +
-    `<div><h3>Use, MMT/yr</h3><dl>${B.used.map((i) => row(color(i.id), `${i.label}, used in India`, fmt(i.v))).join("")}` +
-      `${row("", "Exported (all products)", fmt(B.productExports))}${row("url(#stripes)", "Fuel, losses, stocks", fmt(B.other)).replace('style="background:url(#stripes)"', 'class="striped"')}</dl></div>`;
+    col("Supply",
+      row("var(--s1)", "Imported crude", fmt(B.crudeImports), "total", mbd(B.crudeImports)) +
+      row("", "Domestic crude", fmt(B.domesticCrude), "total", mbd(B.domesticCrude)) +
+      B.domestic.map((d) => row(`var(--${d.id})`, d.label.replace(" (PSC/RSC)", ""), fmt(d.v), "sub")).join("") +
+      row("", "Imported products", fmt(B.productImports), "total") +
+      B.imports.map((i) => row(color(i.id), i.label, fmt(i.v), "sub")).join("")) +
+    col("Refineries",
+      row("", "Crude processed", fmt(B.processed), "", mbd(B.processed)) +
+      row("", "Capacity", fmt(B.capacity), "", mbd(B.capacity)) +
+      row("", "Capacity in use", share(B.processed, B.capacity))) +
+    col("Use",
+      row("", "Used in India", fmt(B.consumption), "total") +
+      B.used.map((i) => row(color(i.id), i.label, fmt(i.v), "sub")).join("") +
+      row("", "Exported", fmt(B.productExports), "total") +
+      row("striped", "Fuel, losses, stocks", fmt(B.other), "total"));
   $("balnote").textContent = `How this is built: crude processed and consumption (total, diesel, petrol, LPG) are PPAC Snapshot figures; crude and product imports and exports ` +
     `come from PPAC's import/export data, and domestic crude by producer from PPAC's crude production data; both are provisional. All are ${DATA.edition.period} monthly averages multiplied by 12. Imported LPG is counted towards LPG use and other imported products towards other products. ` +
     `Domestic LPG includes some made from natural gas rather than crude. Barrels (mb/d, million barrels a day) are shown for crude only, at ${B.bblPerTonne} barrels per tonne; products stay in tonnes because their densities differ. ` +
