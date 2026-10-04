@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Real Cost of Diesel · India Oil &amp; Gas Atlas</title>
+<meta name="description" content="Crude is $116 a barrel and diesel $164. What a barrel of diesel costs India, which refines its own, compared with countries that have no refinery.">
+<meta property="og:title" content="The Real Cost of Diesel">
+<meta property="og:description" content="Why India pays about $45 a barrel less for diesel than a country without refineries, and how war has pushed up shipping and insurance.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23256abf'/%3E%3Cpath d='M16 6c-4 6-7 9.5-7 13a7 7 0 0 0 14 0c0-3.5-3-7-7-13z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=Public+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+/* Layout: a reading column for the story, with full-width cards for the two charts and the sources table. */
+.story { display: flex; flex-direction: column; gap: 22px; }
+.prose { max-width: 70ch; font-size: 16px; line-height: 1.65; display: flex; flex-direction: column; gap: 12px; }
+.prose p { margin: 0; }
+.prose h2 { margin: 12px 0 0; font-family: var(--display); font-stretch: 85%; font-weight: 700; font-size: 24px; line-height: 1.2; text-wrap: balance; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+.card h2 { margin: 0; font-family: var(--display); font-stretch: 85%; font-weight: 700; font-size: 22px; line-height: 1.2; text-wrap: balance; }
+.card .sub { margin: 4px 0 0; color: var(--ink-2); }
+
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 860px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.stat .v { font-family: var(--display); font-stretch: 85%; font-weight: 800; font-size: 30px; line-height: 1.1; }
+.stat .k { font-size: 13px; color: var(--ink-2); }
+
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 12px; height: 12px; border-radius: 2px; display: inline-block; }
+.legend .rng { width: 18px; height: 2px; border-radius: 0; background: var(--ink-2); }
+
+/* Stacked cost bars, drawn in HTML so labels stay readable at any width */
+.bars { display: flex; flex-direction: column; gap: 18px; position: relative; }
+.brow { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 4px 16px; align-items: center; }
+@media (max-width: 700px) { .brow { grid-template-columns: minmax(0, 1fr); } }
+.blabel b { display: block; font-weight: 700; }
+@media (max-width: 700px) { .blabel { position: relative; z-index: 1; } .blabel b, .blabel span { background: var(--surface); box-shadow: 0 0 0 3px var(--surface); } }
+.blabel span { font-size: 13px; color: var(--muted); }
+.track { position: relative; height: 34px; }
+.stack { position: absolute; inset: 4px auto 4px 0; display: flex; gap: 2px; }
+.seg { height: 100%; min-width: 2px; cursor: default; }
+.seg:first-child { border-radius: 2px 0 0 2px; }
+.seg:last-child { border-radius: 0 4px 4px 0; }
+.seg.premium { background: repeating-linear-gradient(135deg, var(--p-diesel) 0 5px, var(--surface) 5px 7px); }
+.range { position: absolute; top: 50%; height: 2px; background: var(--ink-2); }
+.range::after { content: ""; position: absolute; right: -1px; top: -5px; width: 2px; height: 12px; background: var(--ink-2); }
+.total { position: absolute; top: 50%; transform: translateY(-50%); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; font-size: 14px; }
+.rngtxt { font-weight: 500; color: var(--muted); }
+@media (max-width: 700px) { .rngtxt { display: none; } }
+.marker { position: absolute; top: -6px; width: 10px; height: 10px; transform: translateX(-5px) rotate(45deg); background: var(--surface); border: 2px solid var(--ink); }
+.mnote { font-size: 12px; color: var(--muted); grid-column: 2; margin-top: -2px; }
+@media (max-width: 700px) { .mnote { grid-column: 1; } }
+.axis { position: relative; height: 18px; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.axis span { position: absolute; transform: translateX(-50%); }
+.grid { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--line); pointer-events: none; }
+.ref { position: absolute; top: 24px; bottom: 18px; width: 0; border-left: 2px dashed var(--ink-2); pointer-events: none; }
+.reflabel { position: absolute; top: -22px; transform: translateX(-50%); line-height: 16px; font-size: 12px; color: var(--ink-2); white-space: nowrap; background: var(--surface); padding: 0 4px; }
+.plot { position: relative; padding-top: 30px; }
+.chartnote { margin: 0; font-size: 13px; color: var(--ink-2); max-width: 95ch; }
+
+/* Change dot plot, log scale */
+.changes { display: flex; flex-direction: column; gap: 10px; }
+.crow { display: grid; grid-template-columns: 300px minmax(0, 1fr) 190px; gap: 4px 16px; align-items: center; }
+@media (max-width: 860px) { .crow { grid-template-columns: minmax(0, 1fr); } }
+.crow .lab { font-weight: 600; }
+.crow .det { font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.ctrack { position: relative; height: 22px; }
+.cbase { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--line); }
+.cbar { position: absolute; top: 7px; height: 8px; left: 0; background: var(--accent); border-radius: 0 4px 4px 0; opacity: .85; }
+.crng { position: absolute; top: 50%; height: 2px; background: var(--accent); }
+.cval { position: absolute; top: 50%; transform: translate(6px, -50%); font-weight: 700; font-size: 13px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+.tip { position: fixed; z-index: 5; pointer-events: none; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; box-shadow: 0 6px 20px rgba(0,0,0,.14); max-width: 300px; font-size: 13px; }
+.tip b { display: block; }
+.tip .v { font-weight: 600; font-variant-numeric: tabular-nums; }
+.tip .s { color: var(--muted); font-size: 12px; margin-top: 4px; }
+
+.ledger { overflow-x: auto; }
+.ledger table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 13px; }
+.ledger th, .ledger td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.ledger th { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.ledger td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.badge { display: inline-block; font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 8px; border: 1px solid var(--line); white-space: nowrap; }
+.badge.primary { color: var(--ink); background: var(--accent-soft); border-color: transparent; }
+.badge.estimate { color: var(--ink-2); background: transparent; border-style: dashed; }
+.srcs { margin: 0; padding-left: 18px; font-size: 13px; color: var(--ink-2); display: flex; flex-direction: column; gap: 4px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <nav class="site-nav" aria-label="Site">
+    <a class="brand" href="./"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="var(--accent)"/><path d="M16 6c-4 6-7 9.5-7 13a7 7 0 0 0 14 0c0-3.5-3-7-7-13z" fill="var(--surface)"/></svg>Oil &amp; Gas Atlas</a>
+    <div class="links"><a href="./">Map</a><a href="diesel-cost.html" aria-current="page">Cost of diesel</a><a href="about.html">About &amp; sources</a></div>
+  </nav>
+
+  <header>
+    <p class="eyebrow">September 2026 · prices in US dollars</p>
+    <h1 id="h1"></h1>
+    <p class="lede" id="lede"></p>
+  </header>
+
+  <div class="story">
+    <div class="stats" id="stats"></div>
+
+    <section class="card" aria-labelledby="c1">
+      <div>
+        <h2 id="c1">What a barrel of diesel costs before it reaches the pump</h2>
+        <p class="sub">US dollars per barrel, September 2026, before taxes, distribution and retail margins.</p>
+      </div>
+      <div class="legend" id="legend1"></div>
+      <div class="plot" id="plot1"></div>
+      <p class="chartnote" id="note1"></p>
+    </section>
+
+    <div class="prose" id="prose1"></div>
+
+    <section class="card" aria-labelledby="c2">
+      <div>
+        <h2 id="c2">How far shipping and insurance costs have risen in a year</h2>
+        <p class="sub">Late September 2026 against late September 2025, as a multiple. Log scale: each step is a doubling or more.</p>
+      </div>
+      <div class="plot" id="plot2"></div>
+    </section>
+
+    <div class="prose" id="prose2"></div>
+
+    <section class="card" aria-labelledby="c3">
+      <div>
+        <h2 id="c3">Where every number comes from</h2>
+        <p class="sub">Published figures are marked as such. Estimates are our calculations from published figures, with the assumptions stated.</p>
+      </div>
+      <div class="ledger"><table id="ledger"></table></div>
+    </section>
+
+    <section aria-labelledby="c4">
+      <h2 id="c4" class="eyebrow" style="margin:0 0 8px">Sources</h2>
+      <ol class="srcs" id="srcs"></ol>
+    </section>
+  </div>
+
+  <footer><span>Independent analysis; not affiliated with PPAC or any company or government named. Prices move daily; figures are monthly averages or the latest weekly assessment stated.</span></footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+
+<script>
+const D = {"period":"September 2026","cases":[{"id":"india-gulf","label":"India, refining Gulf crude","sub":"Crude shipped through Hormuz","layers":[{"key":"crude","label":"Crude oil (Indian basket, FOB)","v":116.09,"low":116.09,"high":116.09,"type":"primary","source":"PPAC international prices, September 2026"},{"key":"freight","label":"Freight to India","v":8.0,"low":6.0,"high":10.0,"type":"estimate","source":"Scaled from Baltic TD3C (Gulf-China) WS1,157.5 on 25 Sep 2026, at about $19/t per WS100 (S&P five-year average $18.91/t), by round-trip days 12 vs 45"},{"key":"insurance","label":"War-risk insurance","v":2.27,"low":2.27,"high":7.58,"type":"estimate","source":"Hormuz war-risk premium 3-10% of hull value per transit (Marsh/S&P via news), on a $150m VLCC carrying 1.98m bbl"},{"key":"refining","label":"Refining","v":4.0,"low":3.0,"high":5.0,"type":"estimate","source":"Typical cash operating cost of a large Asian refinery; assumption"}],"mid":130.4,"low":127.4,"high":138.7},{"id":"india-russia","label":"India, refining Russian crude","sub":"Baltic ports; Black Sea cargoes cost more","layers":[{"key":"crude","label":"Crude oil (Urals, about Brent minus $1–2)","v":114.59,"low":114.59,"high":114.59,"type":"primary","source":"Trade sources via Business Recorder/Reuters, late Aug-early Sep 2026; basket used as the Brent proxy"},{"key":"freight","label":"Freight to India","v":13.0,"low":13.0,"high":23.2,"type":"primary","source":"Suezmax Baltic ports to West Coast India, about $13m per cargo, Sep 2026 (trade reports); high = Black Sea"},{"key":"refining","label":"Refining","v":4.0,"low":3.0,"high":5.0,"type":"estimate","source":"Typical cash operating cost of a large Asian refinery; assumption"}],"mid":131.6,"low":130.6,"high":142.8},{"id":"kenya","label":"Kenya, no refinery","sub":"Fixed government-to-government contract","layers":[{"key":"diesel","label":"Diesel (Arab Gulf gasoil, FOB)","v":164.45,"low":164.45,"high":164.45,"type":"primary","source":"PPAC international prices, September 2026"},{"key":"freight","label":"Freight and premium, fixed at $78/t","v":10.47,"low":10.47,"high":10.47,"type":"primary","source":"Kenya G-to-G contract, diesel freight and premium fixed since March 2025"}],"marker":{"v":152.16,"label":"Actually paid for August cargoes, priced on cheaper July–August benchmarks (EPRA)"},"mid":174.9,"low":174.9,"high":174.9},{"id":"spot","label":"No refinery, buying spot","sub":"Gulf to East Africa on the open market","layers":[{"key":"diesel","label":"Diesel (Arab Gulf gasoil, FOB)","v":164.45,"low":164.45,"high":164.45,"type":"primary","source":"PPAC international prices, September 2026"},{"key":"premium","label":"Supplier premium","v":2.0,"low":2.0,"high":5.0,"type":"estimate","source":"Typical supplier premium over the benchmark; reported to spike far higher in shortages"},{"key":"freight","label":"Freight","v":12.35,"low":10.74,"high":14.09,"type":"estimate","source":"Baltic TC17 (Gulf-East Africa MR) TCE $107,500/day on 25 Sep 2026 x 24-day round trip, plus fuel at $941/t (Fujairah VLSFO) and port costs, over 35,000 t"},{"key":"insurance","label":"War-risk insurance","v":0,"low":0,"high":17.26,"type":"estimate","source":"Zero if loaded outside Hormuz; up to 10% of a $45m MR hull over 260,750 bbl if it transits"}],"mid":178.8,"low":177.2,"high":200.8}],"headline":{"crude":116.09491506818185,"diesel":164.44681818181817,"crack":48.35,"saving":44.5,"saving_rs_l":26.7,"saving_bn":34.0,"self_sufficiency":113,"exports_bn":21.8,"export_margin":34.0,"duty_sept":33.3,"duty_now":26.6,"fx":95.51},"changes":[{"label":"Crude freight, Gulf to China (VLCC, TD3C)","before":100,"after":1157.5,"unit":"Worldscale","type":"primary","source":"Baltic Exchange tanker reports, 26 Sep 2025 and 25 Sep 2026"},{"label":"Crude freight, US Gulf to China (VLCC, TD22)","before":11.34,"after":52.5,"unit":"$m per voyage","type":"primary","source":"Baltic Exchange tanker reports, 26 Sep 2025 and 25 Sep 2026"},{"label":"Product freight, Gulf to Europe (LR2, TC20)","before":3.24,"after":17.27,"unit":"$m per voyage","type":"primary","source":"Baltic Exchange tanker reports, 26 Sep 2025 and 25 Sep 2026"},{"label":"Product freight, Gulf to East Africa (MR, TC17)","before":175,"after":847.86,"unit":"Worldscale","type":"primary","source":"Baltic Exchange tanker reports, 26 Sep 2025 and 25 Sep 2026"},{"label":"War-risk insurance, Hormuz transit","before":0.25,"after":3,"after_high":10,"unit":"% of hull value","type":"primary","source":"Marsh / S&P via news reports, Jul-Sep 2026"},{"label":"India crude import bill, Apr-Aug (same volume)","before":50.5,"after":74.8,"unit":"$bn","type":"primary","source":"PPAC via Business Standard; 2025 figure derived from the reported 48% rise"}],"inputs":[{"label":"fx","v":95.51,"unit":"Rs per US$","type":"primary","source":"FRED EXINUS, September 2026 average","url":"https://fred.stlouisfed.org/series/exinus"},{"label":"crude_freight_gulf_india","v":8.0,"low":6.0,"high":10.0,"unit":"$/bbl","type":"estimate","source":"Scaled from Baltic TD3C (Gulf-China) WS1,157.5 on 25 Sep 2026, at about $19/t per WS100 (S&P five-year average $18.91/t), by round-trip days 12 vs 45","url":"https://www.balticexchange.com/en/data-services/WeeklyRoundup/tanker/news/2026/tanker-report-week-39.html"},{"label":"war_risk_vlcc","v":2.27,"low":2.27,"high":7.58,"unit":"$/bbl","type":"estimate","source":"Hormuz war-risk premium 3-10% of hull value per transit (Marsh/S&P via news), on a $150m VLCC carrying 1.98m bbl","url":"https://www.aljazeera.com/economy/2026/7/23/how-shipping-insurance-rates-are-rising-as-hormuz-bab-al-mandeb-shut-down"},{"label":"refining_cost","v":4.0,"low":3.0,"high":5.0,"unit":"$/bbl","type":"estimate","source":"Typical cash operating cost of a large Asian refinery; assumption"},{"label":"urals_discount","v":1.5,"low":1.0,"high":2.0,"unit":"$/bbl below Brent","type":"primary","source":"Trade sources via Business Recorder/Reuters, late Aug-early Sep 2026","url":"https://www.brecorder.com/news/40432363/discounts-narrow-on-russian-urals-crude-in-india-sources-say"},{"label":"russia_freight_baltic","v":13.0,"unit":"$/bbl","type":"primary","source":"Suezmax Baltic ports to West Coast India, about $13m per cargo, Sep 2026 (trade reports)","url":"https://www.marinelink.com/news/tanker-freight-rates-russian-crude-india-530852"},{"label":"russia_freight_blacksea","v":23.2,"unit":"$/bbl","type":"primary","source":"Novorossiysk to India, week to 6 Sep 2026 (trade reports)","url":"https://www.marinelink.com/news/tanker-freight-rates-russian-crude-india-530852"},{"label":"kenya_fixed_freight_premium","v":78,"unit":"$/t","type":"primary","source":"Kenya G-to-G contract, diesel freight and premium fixed since March 2025","url":"https://nairobiwire.com/2026/09/kenya-g-to-g-fuel-deal-wandayi-dollar-shortage.html"},{"label":"kenya_actual_landed","v":957.05,"unit":"$/m3","type":"primary","source":"EPRA, average landed cost of diesel, August 2026 cargoes (pump prices 15 Sep-14 Oct)","url":"https://eastleighvoice.co.ke/national/400397/epra-maintains-fuel-prices-for-another-month-despite-sharp-rise-in-diesel-and-kerosene-import-costs"},{"label":"product_freight_gulf_eafrica","v":92,"low":80,"high":105,"unit":"$/t","type":"estimate","source":"Baltic TC17 (Gulf-East Africa MR) TCE $107,500/day on 25 Sep 2026 x 24-day round trip, plus fuel at $941/t (Fujairah VLSFO) and port costs, over 35,000 t","url":"https://www.balticexchange.com/en/data-services/WeeklyRoundup/tanker/news/2026/tanker-report-week-39.html"},{"label":"war_risk_mr","v":0,"low":0,"high":17.26,"unit":"$/bbl","type":"estimate","source":"Zero if loaded outside Hormuz; up to 10% of a $45m MR hull over 260,750 bbl if it transits"},{"label":"spot_premium","v":2.0,"low":2.0,"high":5.0,"unit":"$/bbl","type":"estimate","source":"Typical supplier premium over the benchmark; reported to spike far higher in shortages"},{"label":"diesel_bbl_per_tonne","v":7.45,"unit":"bbl/t","type":"estimate","source":"Standard conversion for gasoil"},{"label":"diesel_use_mmt_yr","v":102.62,"unit":"MMT/yr","type":"primary","source":"PPAC Snapshot, India diesel consumption, Apr-Jun 2026 monthly average x 12"},{"label":"diesel_exports_mmt_yr","v":17.8,"unit":"MMT/yr","type":"primary","source":"PPAC import/export data, diesel exports, Apr-Jun 2026 average x 12"},{"label":"diesel_production_tmt_month","v":9643.2,"unit":"TMT/month","type":"primary","source":"PPAC Snapshot, India HSD production, Apr-Jun 2026"},{"label":"diesel_use_tmt_month","v":8551.7,"unit":"TMT/month","type":"primary","source":"PPAC Snapshot, India diesel consumption, Apr-Jun 2026"},{"label":"export_duty_now","v":16,"unit":"Rs/L","type":"primary","source":"SAED on diesel exports from 1 Oct 2026","url":"https://taxguru.in/excise-duty/diesel-export-saed-cut-rs-20-rs-16-litre-1-october-2026.html"},{"label":"export_duty_sept","v":20,"unit":"Rs/L","type":"primary","source":"SAED on diesel exports from 16 Sep 2026","url":"https://taxguru.in/excise-duty/saed-petrol-diesel-exports-cut-rs-0-5-rs-20-litre-16-september-2026.html"}],"sources":[{"label":"PPAC, international prices of crude oil (Indian basket) and diesel","url":"https://ppac.gov.in/prices/international-prices-of-diesel"},{"label":"Baltic Exchange, tanker report week 39, 2026","url":"https://www.balticexchange.com/en/data-services/WeeklyRoundup/tanker/news/2026/tanker-report-week-39.html"},{"label":"Baltic Exchange, tanker report week 39, 2025","url":"https://www.balticexchange.com/en/data-services/WeeklyRoundup/tanker/news/2025/tanker-report-week-39.html"},{"label":"Al Jazeera: Hormuz and Bab al-Mandeb insurance rates (S&P Global, Marsh)","url":"https://www.aljazeera.com/economy/2026/7/23/how-shipping-insurance-rates-are-rising-as-hormuz-bab-al-mandeb-shut-down"},{"label":"EPRA landed costs, September-October 2026 cycle (Eastleigh Voice)","url":"https://eastleighvoice.co.ke/national/400397/epra-maintains-fuel-prices-for-another-month-despite-sharp-rise-in-diesel-and-kerosene-import-costs"},{"label":"Kenya G-to-G freight and premium (Nairobi Wire)","url":"https://nairobiwire.com/2026/09/kenya-g-to-g-fuel-deal-wandayi-dollar-shortage.html"},{"label":"Russian crude freight to India (MarineLink)","url":"https://www.marinelink.com/news/tanker-freight-rates-russian-crude-india-530852"},{"label":"Urals discounts in India (Business Recorder)","url":"https://www.brecorder.com/news/40432363/discounts-narrow-on-russian-urals-crude-in-india-sources-say"},{"label":"India crude import bill Apr-Aug FY27 (Business Standard, PPAC data)","url":"https://www.business-standard.com/amp/markets/capital-market-news/india-s-crude-oil-imports-value-spikes-around-50-on-year-in-first-five-months-of-fy27-126092100582_1.html"},{"label":"Diesel export SAED (TaxGuru)","url":"https://taxguru.in/excise-duty/diesel-export-saed-cut-rs-20-rs-16-litre-1-october-2026.html"},{"label":"INR/USD (FRED)","url":"https://fred.stlouisfed.org/series/exinus"}],"ppacFiles":["2026-10-04_PPAC_crude_intl_price.xlsx","2026-10-04_PPAC_diesel_intl_price.xlsx"]};
+const $ = (id) => document.getElementById(id);
+const H = D.headline;
+const usd = (v, d = 1) => "$" + v.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+const COLORS = {
+  crude: "var(--s1)", diesel: "var(--p-diesel)", premium: "var(--p-diesel)",
+  freight: "var(--s3)", insurance: "var(--p-lpg)", refining: "var(--p-naphtha)",
+};
+const NAMES = { crude: "Crude oil", diesel: "Diesel bought abroad", premium: "Supplier premium", freight: "Freight", insurance: "War-risk insurance", refining: "Refining" };
+const byId = Object.fromEntries(D.cases.map((c) => [c.id, c]));
+
+/* ---------- header and headline numbers ---------- */
+$("h1").textContent = `Crude is ${usd(H.crude, 0)}. Diesel is ${usd(H.diesel, 0)}. Why India pays far less for diesel than a country without refineries`;
+$("lede").textContent = `In ${D.period} the Indian crude basket averaged ${usd(H.crude, 2)} a barrel and Gulf diesel ${usd(H.diesel, 2)}. ` +
+  `Both are prices at the loading port, so the ${usd(H.crack)} gap is not shipping: it is what the world is paying for scarce diesel. ` +
+  `India refines its own, so it pays for crude and shipping; a country without refineries pays the diesel price plus everything on top.`;
+const stats = [
+  [usd(H.saving, 0), "less per barrel of diesel for India than for Kenya, which has no refinery"],
+  [`₹${H.saving_rs_l.toFixed(0)}`, "per litre, the same gap in rupees"],
+  [`${H.self_sufficiency}%`, "of the diesel India uses, it makes itself (April–June)"],
+  [`$${H.saving_bn.toFixed(0)}bn`, "a year India would pay extra if it imported its diesel on Kenya's terms"],
+];
+$("stats").innerHTML = stats.map(([v, k]) => `<div class="stat"><span class="v">${v}</span><span class="k">${k}</span></div>`).join("");
+
+/* ---------- chart 1: stacked cost bars ---------- */
+const MAX = Math.ceil(Math.max(...D.cases.map((c) => c.high)) / 20) * 20 + 10;
+const x = (v) => `${(v / MAX) * 100}%`;
+const used = [...new Set(D.cases.flatMap((c) => c.layers.map((l) => l.key)))];
+$("legend1").innerHTML = used.map((k) => `<span><i class="${k === "premium" ? "seg premium" : ""}" style="${k === "premium" ? "" : `background:${COLORS[k]}`}"></i>${NAMES[k]}</span>`).join("") +
+  `<span><i class="rng"></i>Range of estimates</span>`;
+
+const ticks = [];
+for (let t = 0; t <= MAX; t += 50) ticks.push(t);
+let html = `<div class="ref" style="left:calc(210px + 16px + (100% - 226px) * ${H.diesel / MAX})" id="refline"></div>`;
+html += `<div class="bars" id="bars">`;
+for (const c of D.cases) {
+  const segs = c.layers.filter((l) => l.v > 0).map((l) =>
+    `<div class="seg ${l.key === "premium" ? "premium" : ""}" tabindex="0" data-case="${c.id}" data-i="${c.layers.indexOf(l)}" style="width:${(l.v / c.mid) * 100}%;${l.key === "premium" ? "" : `background:${COLORS[l.key]}`}"></div>`).join("");
+  const range = c.high > c.low ? `<div class="range" style="left:${x(c.low)};width:calc(${x(c.high)} - ${x(c.low)})"></div>` : "";
+  const total = c.high > c.low ? `${usd(c.mid, 0)} <span class="rngtxt">(${usd(c.low, 0)}–${usd(c.high, 0)})</span>` : usd(c.mid, 0);
+  const marker = c.marker ? `<div class="marker" style="left:${x(c.marker.v)}" tabindex="0" data-marker="${c.id}" aria-label="${c.marker.label}: ${usd(c.marker.v)}"></div>` : "";
+  html += `<div class="brow"><div class="blabel"><b>${c.label}</b><span>${c.sub}</span></div>
+    <div class="track"><div class="stack" style="width:${x(c.mid)}">${segs}</div>${range}${marker}
+      <div class="total" style="left:calc(${x(c.high)} + 8px)">${total}</div></div>
+    ${c.marker ? `<div class="mnote">◆ ${usd(c.marker.v)}: ${c.marker.label}</div>` : ""}</div>`;
+}
+html += `<div class="brow"><div></div><div class="axis">${ticks.map((t) => `<span style="left:${x(t)}">$${t}</span>`).join("")}</div></div></div>`;
+$("plot1").innerHTML = html;
+// Place the dashed diesel-price line over the track column only, and label it.
+function placeRef() {
+  const plot = $("plot1"), track = plot.querySelector(".track");
+  const left = track.getBoundingClientRect().left - plot.getBoundingClientRect().left + track.clientWidth * (H.diesel / MAX);
+  const ref = $("refline");
+  ref.style.left = left + "px";
+  ref.innerHTML = `<span class="reflabel">Gulf diesel price ${usd(H.diesel, 2)}</span>`;
+}
+placeRef();
+addEventListener("resize", placeRef);
+
+$("note1").textContent = `Bars show the central estimate; the thin line spans the low-to-high range of the estimates. India's cost is crude plus freight, insurance and refining, ` +
+  `about ${usd(byId["india-gulf"].mid, 0)} (${usd(byId["india-gulf"].low, 0)}–${usd(byId["india-gulf"].high, 0)}) for Gulf crude. Kenya pays the Gulf diesel price plus a freight and premium fixed by contract. ` +
+  `A buyer on the open market also pays spot freight, a supplier premium and, if the cargo crosses Hormuz, war-risk insurance. Gulf crude for India crosses Hormuz too, which is why insurance appears in its bar.`;
+
+/* ---------- story text ---------- */
+$("prose1").innerHTML = `
+  <h2>The gap is the diesel shortage, not the ship</h2>
+  <p>Diesel has cost far more than crude all year: ${usd(H.crack)} a barrel more in ${D.period}, against a more usual $15–25. Refinery outages in Russia and West Asia, low stocks and export curbs have made diesel scarce, and trucks, farms and generators cannot easily use less.</p>
+  <p>A country that refines its own crude does not pay that premium for the diesel it makes. India produces about ${H.self_sufficiency}% of the diesel it uses, so on every barrel it saves roughly ${usd(H.saving, 0)} against Kenya, or ₹${H.saving_rs_l.toFixed(0)} a litre at ₹${H.fx} to the dollar. Across a year of Indian diesel use that is about $${H.saving_bn.toFixed(0)} billion.</p>
+  <h2>India also sells the surplus, and the government takes most of the margin</h2>
+  <p>India exported diesel at a rate worth about $${H.exports_bn.toFixed(0)} billion a year at ${D.period} prices. Its margin over its own cost was about ${usd(H.export_margin, 0)} a barrel, almost exactly the export tax of ₹20 a litre (${usd(H.duty_sept, 0)} a barrel) in force from 16 September. From 1 October the tax is ₹16 a litre (${usd(H.duty_now, 0)} a barrel), leaving exporters a few dollars a barrel.</p>`;
+
+$("prose2").innerHTML = `
+  <h2>War has made every barrel dearer to move</h2>
+  <p>Hormuz traffic fell to around 10 ships a day in July from 120–140 before the war, Red Sea traffic is well below normal, and Russian crude for India now travels further. Supertanker rates from the Gulf are more than ten times last year's and war-risk cover for a Hormuz transit costs 3–10% of a ship's value, against about 0.25% before. For India these add several dollars to each barrel of crude; for a country importing diesel in smaller ships, insurance alone can add more than $15 a barrel.</p>
+  <p>Even so, shipping is the smaller part of the story. The difference between a refining country and a non-refining one is the diesel premium, and India keeps it at home.</p>`;
+
+/* ---------- chart 2: log-scale multiples ---------- */
+const LMAX = 100, lx = (m) => `${(Math.log10(Math.max(m, 1)) / Math.log10(LMAX)) * 100}%`;
+const fmtU = (v, u) => u.startsWith("$m") ? `$${v}m` : u === "$bn" ? `$${v}bn` : u.startsWith("%") ? `${v}%` : `WS ${v}`;
+let h2 = `<div class="changes">`;
+for (const c of D.changes) {
+  const m = c.after / c.before, mh = c.after_high ? c.after_high / c.before : null;
+  const rng = mh ? `<div class="crng" style="left:${lx(m)};width:calc(${lx(mh)} - ${lx(m)})"></div>` : "";
+  const lbl = mh ? `×${m.toFixed(0)}–${mh.toFixed(0)}` : `×${m.toFixed(1)}`;
+  const after = c.after_high ? `${fmtU(c.after, c.unit)}–${fmtU(c.after_high, c.unit)}` : fmtU(c.after, c.unit);
+  h2 += `<div class="crow"><div class="lab">${c.label}</div>
+    <div class="ctrack" tabindex="0" data-tip="${c.label}: ${fmtU(c.before, c.unit)} → ${after}. ${c.source}"><div class="cbase"></div>
+      <div class="cbar" style="width:${lx(m)}"></div>${rng}<div class="cval" style="left:${lx(mh || m)}">${lbl}</div></div>
+    <div class="det">${fmtU(c.before, c.unit)} → ${after}</div></div>`;
+}
+h2 += `<div class="crow"><div></div><div class="axis">${[1, 2, 5, 10, 20, 50, 100].map((t) => `<span style="left:${lx(t)}">${t}×</span>`).join("")}</div><div></div></div></div>`;
+$("plot2").innerHTML = h2;
+
+/* ---------- ledger and sources ---------- */
+const rows = D.cases.flatMap((c) => c.layers.map((l) => ({ c, l })));
+$("ledger").innerHTML = `<thead><tr><th>Case</th><th>Layer</th><th>$/bbl</th><th>Type</th><th>Source or assumption</th></tr></thead><tbody>` +
+  rows.map(({ c, l }) => `<tr><td>${c.label}</td><td>${l.label}</td><td class="num">${usd(l.v, 2)}${l.low === l.high ? "" : `<br><span style="color:var(--muted)">${usd(l.low, 2)}–${usd(l.high, 2)}</span>`}</td>` +
+    `<td><span class="badge ${l.type}">${l.type === "primary" ? "Published" : "Estimate"}</span></td><td>${l.source}</td></tr>`).join("") + `</tbody>`;
+$("srcs").innerHTML = D.sources.map((s) => `<li><a href="${s.url}" target="_blank" rel="noopener">${s.label}</a></li>`).join("") +
+  `<li>PPAC spreadsheets used: ${D.ppacFiles.join(", ")}</li>`;
+
+/* ---------- tooltips ---------- */
+const tip = $("tip");
+function show(el, e) {
+  let h = "";
+  if (el.dataset.case) {
+    const l = byId[el.dataset.case].layers[+el.dataset.i];
+    h = `<b>${l.label}</b><div class="v">${usd(l.v, 2)} a barrel${l.low === l.high ? "" : ` (range ${usd(l.low, 2)} to ${usd(l.high, 2)})`}</div><div class="s">${l.type === "primary" ? "Published" : "Estimate"}: ${l.source}</div>`;
+  } else if (el.dataset.marker) {
+    const m = byId[el.dataset.marker].marker;
+    h = `<b>${usd(m.v, 2)} a barrel</b><div class="s">${m.label}</div>`;
+  } else if (el.dataset.tip) {
+    h = el.dataset.tip;
+  }
+  tip.innerHTML = h;
+  tip.hidden = false;
+  const r = el.getBoundingClientRect();
+  const px = e && e.clientX ? e.clientX : r.left + r.width / 2, py = e && e.clientY ? e.clientY : r.top;
+  let left = px + 12, top = py + 14;
+  if (left + tip.offsetWidth > innerWidth - 8) left = px - tip.offsetWidth - 12;
+  if (top + tip.offsetHeight > innerHeight - 8) top = py - tip.offsetHeight - 14;
+  tip.style.left = Math.max(8, left) + "px";
+  tip.style.top = Math.max(8, top) + "px";
+}
+for (const el of document.querySelectorAll("[data-case],[data-marker],[data-tip]")) {
+  el.addEventListener("pointermove", (e) => show(el, e));
+  el.addEventListener("pointerleave", () => (tip.hidden = true));
+  el.addEventListener("focus", () => show(el));
+  el.addEventListener("blur", () => (tip.hidden = true));
+}
+</script>
+</body>
+</html>
