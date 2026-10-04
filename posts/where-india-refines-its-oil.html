@@ -34,8 +34,6 @@
 /* Charts are wider than the text: up to 1000px, never wider than the screen. */
 .chart { margin: 1.4em 0 1.8em; width: min(1000px, calc(100vw - 32px)); margin-left: 50%; transform: translateX(-50%); }
 .chart iframe { display: block; width: 100%; border: 0; border-radius: var(--radius); background: var(--bg); }
-.chart figcaption { margin-top: 6px; font-size: 13px; color: var(--muted); display: flex; justify-content: flex-end; }
-.chart figcaption a { color: var(--accent); text-decoration: none; font-weight: 600; }
 .subscribe { max-width: 680px; margin: 8px auto 0; width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; display: flex; gap: 12px 20px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
 .subscribe p { margin: 0; color: var(--ink-2); }
 .subscribe b { color: var(--ink); display: block; font-size: 17px; }
@@ -47,7 +45,7 @@
 <div class="page">
   <nav class="site-nav" aria-label="Site">
     <a class="brand" href="../"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="var(--accent)"/><path d="M16 6c-4 6-7 9.5-7 13a7 7 0 0 0 14 0c0-3.5-3-7-7-13z" fill="var(--surface)"/></svg>Oil &amp; Gas Atlas</a>
-    <div class="links"><a href="./" aria-current="page">Articles</a><a href="../">Map</a><a href="../about.html">About &amp; sources</a></div>
+    <div class="links"><a href="./" aria-current="page">Articles</a><a href="../">Map</a></div>
   </nav>
 
   <article class="article">
@@ -64,17 +62,17 @@
 <p>Every month, India's refineries take in about 22 million tonnes of crude oil, roughly 5.3 million barrels a day (mbpd).</p>
 <p>This first post maps where that refining happens, how much each state can process, and where the oil goes. The figures come from the Petroleum Planning &amp; Analysis Cell (PPAC), the data arm of the Ministry of Petroleum and Natural Gas, for April to June 2026.</p>
 <h2>24 refineries, 15 states</h2>
-<figure class="chart"><iframe src="../index.html?embed=map&amp;measure=2.01&amp;state=none" title="Refineries by state" height="980" loading="lazy" data-atlas></iframe><figcaption><a href="../index.html" target="_blank" rel="noopener">Open the full interactive page ↗</a></figcaption></figure>
+<figure class="chart"><iframe src="../index.html?embed=map&amp;measure=2.01&amp;state=none" title="Refineries by state" height="980" loading="lazy" data-atlas></iframe></figure>
 <p>India has 24 refineries spread across 15 states. The other 21 states and union territories have none, and draw their fuel from refineries elsewhere.</p>
 <p>The count alone misleads. Assam and Gujarat each have four refineries. Assam's four, at Digboi, Guwahati, Bongaigaon and Numaligarh, can together process 7.6 million tonnes of crude a year. Gujarat's four can process 101.9 million, more than 13 times as much, with one in Jamnagar having the highest refining capacity than any other refineries in the world.</p>
 <p>Most refining states have a single plant: Bihar (Barauni), Haryana (Panipat), Karnataka (Mangalore), Kerala (Kochi), Madhya Pradesh (Bina), Odisha (Paradeep), Punjab (Guru Gobind Singh refinery), Rajasthan (Barmer), Uttar Pradesh (Mathura) and West Bengal (Haldia). Andhra Pradesh, Maharashtra and Tamil Nadu have two each.</p>
 <h2>One state holds 38% of the capacity</h2>
-<figure class="chart"><iframe src="../index.html?embed=map&amp;measure=2.02&amp;state=none" title="Refining capacity by state" height="980" loading="lazy" data-atlas></iframe><figcaption><a href="../index.html" target="_blank" rel="noopener">Open the full interactive page ↗</a></figcaption></figure>
+<figure class="chart"><iframe src="../index.html?embed=map&amp;measure=2.02&amp;state=none" title="Refining capacity by state" height="980" loading="lazy" data-atlas></iframe></figure>
 <p>Together, India's refineries can process 267.1 million tonnes of crude a year, about 5.36 million barrels a day. Gujarat alone accounts for 101.9 million tonnes, 38% of the national total. That is more than the next six states combined.</p>
 <p>The four Gujarat refineries are Reliance's two at Jamnagar, Indian Oil's at Koyali and Nayara Energy's at Vadinar. Between them they can process about four times as much crude as the 25.3 million tonnes of fuel Gujarat itself uses in a year.</p>
 <p>After Gujarat the drop is steep: Maharashtra 21.5 million tonnes, Kerala 15.5, then Haryana, Karnataka and Odisha at 15 each. The remaining nine refining states each have between 6 and 14 million tonnes.</p>
 <h2>Where the oil comes from, and where it goes</h2>
-<figure class="chart"><iframe src="../index.html?embed=balance" title="India&#x27;s oil balance" height="1150" loading="lazy" data-atlas></iframe><figcaption><a href="../index.html" target="_blank" rel="noopener">Open the full interactive page ↗</a></figcaption></figure>
+<figure class="chart"><iframe src="../index.html?embed=balance" title="India&#x27;s oil balance" height="1150" loading="lazy" data-atlas></iframe></figure>
 <p>The chart follows a year of oil through the system, at the pace of April to June 2026. Crude and imported fuel come in, refineries turn crude into products, and the products are used in India or sold abroad.</p>
 <p><strong>Crude coming in.</strong> India imported crude at a rate of 241 million tonnes a year, or 4.84 million barrels a day. That is 90% of all the crude its refineries process. India's own fields add 27.4 million tonnes, and ONGC produces 60% of that. Fields run under production- and revenue-sharing contracts supply 19%, Oil India 14%, and condensate from gas fields the rest.</p>
 <p><strong>Refineries running flat out.</strong> Refineries processed 264.4 million tonnes a year against a capacity of 267.1 million.</p>

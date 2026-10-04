@@ -1,6 +1,6 @@
 /* Embed mode shared by every page.
  *
- *   page.html?embed=<name>            only that chart, with a source line and a link to the full page
+ *   page.html?embed=<name>            only that chart, with a source line
  *   &static=1                         fixed 1200px wide, no hover hints (used to make images)
  *   &theme=light|dark                 force a colour theme
  *
@@ -43,12 +43,10 @@
     finish(sourceText, keep) {
       if (!mode) return;
       keepOnly(keep || mode.split(","));
-      const full = location.href.split("?")[0];
       const foot = document.createElement("div");
       foot.className = "embedfoot";
       foot.innerHTML = `<span>${sourceText}</span>` +
-        (isStatic ? `<span class="brand-sm">India Oil &amp; Gas Atlas</span>`
-                  : `<a href="${full}" target="_blank" rel="noopener">Open the interactive version ↗</a>`);
+        (isStatic ? `<span class="brand-sm">India Oil &amp; Gas Atlas</span>` : "");
       document.querySelector(".page").append(foot);
       postHeight();
       if ("ResizeObserver" in window) new ResizeObserver(postHeight).observe(document.querySelector(".page"));
