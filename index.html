@@ -114,7 +114,8 @@
 .more:hover { background: var(--accent-soft); }
 html.static .grid { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
 html.static #map { max-height: 640px; }
-html.static .balnums, html.static .balnote { display: none; }
+/* Images carry the chart only; the explanation goes in the post. */
+html.static .balnums, html.static .balnote, html.static #ballead, html.static #msub, html.static .ranknote { display: none !important; }
 
 .balance { padding: 20px 20px 16px; display: flex; flex-direction: column; gap: 12px; }
 .balance h2 { margin: 0; font-family: var(--display); font-stretch: 85%; font-weight: 700; font-size: 24px; line-height: 1.15; text-wrap: balance; }
@@ -470,7 +471,8 @@ $("statecard").addEventListener("click", (e) => { const b = e.target.closest(".s
 
 function renderRank() {
   const list = M.sorted.filter((n) => M.vals[n] > 0);
-  let shown = state.showAll ? list : list.slice(0, 10);
+  // Images show every state when the list is short (refineries: 15), otherwise the top 10.
+  let shown = state.showAll || (EMBED.isStatic && list.length <= 15) ? list : list.slice(0, 10);
   if (!state.showAll && list.includes(state.region) && !shown.includes(state.region)) shown = [...shown, state.region];
   const max = M.vals[list[0]] || 1;
   $("rankunit").textContent = M.m.unitLong;
