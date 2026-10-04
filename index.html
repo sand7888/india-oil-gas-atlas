@@ -40,6 +40,16 @@
 
 .grid { display: grid; gap: 18px; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); align-items: start; }
 @media (max-width: 900px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+/* Side by side, the two columns end level: the right column takes the map's height (contain: size keeps it
+   from stretching the row), but at least enough for about eight ranking rows; then the map card stretches and
+   centres the map. The ranking fills what is left and scrolls. Images keep their natural height. */
+@media (min-width: 901px) {
+  html:not(.static) .grid { align-items: stretch; }
+  html:not(.static) .side { contain: size; min-height: 760px; }
+  html:not(.static) .mapwrap { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+  html:not(.static) .rankcard { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  html:not(.static) #rank { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; }
+}
 .side { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); min-width: 0; }
 .mapcard { padding: 18px 18px 14px; display: flex; flex-direction: column; gap: 10px; }
@@ -113,7 +123,13 @@
 .more { margin-top: 10px; font: inherit; font-size: 13px; color: var(--accent); background: none; border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; cursor: pointer; }
 .more:hover { background: var(--accent-soft); }
 html.static .grid { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
-@media (min-width: 640px) { html.embed .grid { grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); } }
+@media (min-width: 640px) {
+  html.embed .grid { grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); }
+  html.embed:not(.static) .grid { align-items: stretch; }
+  html.embed:not(.static) .side { contain: size; }
+  html.embed:not(.static) .rankcard { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  html.embed:not(.static) #rank { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; }
+}
 html.static #map { max-height: 640px; }
 /* Images carry the chart only; the explanation goes in the post. */
 html.static .balnums, html.static .balnote, html.static #ballead, html.static #msub, html.static .ranknote { display: none !important; }
@@ -477,10 +493,12 @@ function renderState() {
 $("statecard").addEventListener("change", (e) => { if (e.target.id === "statesel") select(e.target.value); });
 $("statecard").addEventListener("click", (e) => { const b = e.target.closest(".stat"); if (b) { state.metric = b.dataset.code; render(); } });
 
+const SIDE_BY_SIDE = matchMedia(EMBED.mode ? "(min-width: 640px)" : "(min-width: 901px)");
 function renderRank() {
   const list = M.sorted.filter((n) => M.vals[n] > 0);
-  // Embeds and images show every state when the list is short (refineries: 15), otherwise the top 10.
-  const full = !!EMBED.mode && list.length <= 15;
+  // Side by side, the ranking scrolls within the map's height, so it lists every state. Stacked (phones),
+  // it shows the top 10 with a button; embeds and images list every state when there are at most 15.
+  const full = (!EMBED.isStatic && SIDE_BY_SIDE.matches) || (!!EMBED.mode && list.length <= 15);
   let shown = state.showAll || full ? list : list.slice(0, 10);
   if (!state.showAll && list.includes(state.region) && !shown.includes(state.region)) shown = [...shown, state.region];
   const max = M.vals[list[0]] || 1;
@@ -496,7 +514,14 @@ function renderRank() {
   $("ranknote").textContent = rest ? `${rest} states and union territories have no refinery.` : "";
   $("more").hidden = full || list.length <= 10;
   $("more").textContent = state.showAll ? "Show top 10" : `Show all ${list.length}`;
+  // Keep the selected state in view inside the scrolling list (without scrolling the page).
+  const rk = $("rank"), on = rk.querySelector(".on");
+  if (on && rk.scrollHeight > rk.clientHeight) {
+    const top = on.offsetTop - rk.offsetTop;
+    if (top < rk.scrollTop || top + on.offsetHeight > rk.scrollTop + rk.clientHeight) rk.scrollTop = top - rk.clientHeight / 2;
+  }
 }
+SIDE_BY_SIDE.addEventListener("change", renderRank);
 $("rank").addEventListener("click", (e) => { const b = e.target.closest("[data-name]"); if (b) select(b.dataset.name); });
 $("more").addEventListener("click", () => { state.showAll = !state.showAll; renderRank(); });
 
