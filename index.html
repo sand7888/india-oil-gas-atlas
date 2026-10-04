@@ -479,8 +479,9 @@ $("statecard").addEventListener("click", (e) => { const b = e.target.closest(".s
 
 function renderRank() {
   const list = M.sorted.filter((n) => M.vals[n] > 0);
-  // Images show every state when the list is short (refineries: 15), otherwise the top 10.
-  let shown = state.showAll || (EMBED.isStatic && list.length <= 15) ? list : list.slice(0, 10);
+  // Embeds and images show every state when the list is short (refineries: 15), otherwise the top 10.
+  const full = !!EMBED.mode && list.length <= 15;
+  let shown = state.showAll || full ? list : list.slice(0, 10);
   if (!state.showAll && list.includes(state.region) && !shown.includes(state.region)) shown = [...shown, state.region];
   const max = M.vals[list[0]] || 1;
   $("rankunit").textContent = M.m.unitLong;
@@ -493,7 +494,7 @@ function renderRank() {
   const rest = NAMES.length - list.length;
   $("ranknote").hidden = !rest;
   $("ranknote").textContent = rest ? `${rest} states and union territories have no refinery.` : "";
-  $("more").hidden = list.length <= 10;
+  $("more").hidden = full || list.length <= 10;
   $("more").textContent = state.showAll ? "Show top 10" : `Show all ${list.length}`;
 }
 $("rank").addEventListener("click", (e) => { const b = e.target.closest("[data-name]"); if (b) select(b.dataset.name); });
