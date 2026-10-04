@@ -11,6 +11,7 @@
   --zero: #e6e9ec;
   --hatch: #b4bcc4;
   --c0: #b7d3f6; --c1: #6da7ec; --c2: #3987e5; --c3: #256abf; --c4: #104281;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --flow: #9aa6b2;  /* flow-chart series: imported crude, imported products, domestic crude */
   --display: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
   --body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --radius: 10px;
@@ -20,6 +21,7 @@
     --bg: #0e1114; --surface: #161a1e; --ink: #f1f3f5; --ink-2: #b8c0c8; --muted: #7f8892;
     --line: #2a3036; --accent: #6da7ec; --accent-soft: #1b2a3c; --zero: #262b31; --hatch: #4a525b;
     --c0: #184f95; --c1: #256abf; --c2: #3987e5; --c3: #6da7ec; --c4: #b7d3f6;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --flow: #5d6873;
     color-scheme: dark;
   }
 }
@@ -27,6 +29,7 @@
   --bg: #0e1114; --surface: #161a1e; --ink: #f1f3f5; --ink-2: #b8c0c8; --muted: #7f8892;
   --line: #2a3036; --accent: #6da7ec; --accent-soft: #1b2a3c; --zero: #262b31; --hatch: #4a525b;
   --c0: #184f95; --c1: #256abf; --c2: #3987e5; --c3: #6da7ec; --c4: #b7d3f6;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --flow: #5d6873;
   color-scheme: dark;
 }
 
