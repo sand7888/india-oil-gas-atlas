@@ -52,6 +52,7 @@ header p.lede { margin: 8px 0 0; color: var(--ink-2); max-width: 68ch; }
 footer { color: var(--muted); font-size: 12px; display: flex; flex-direction: column; gap: 4px; max-width: 90ch; }
 footer a { color: var(--ink-2); }
 
+html { background: var(--bg); }
 body { margin: 0; }
 [hidden] { display: none !important; }
 a { color: var(--accent); }
@@ -64,3 +65,14 @@ a { color: var(--accent); }
 .site-nav .links a:hover { background: var(--accent-soft); color: var(--ink); }
 .site-nav .links a[aria-current="page"] { color: var(--ink); background: var(--accent-soft); }
 .site-nav a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Embed mode (see embed.js): just the chart, a source line and a link back. */
+html.embed .site-nav, html.embed .page > header, html.embed .page > footer { display: none; }
+html.embed .page { padding-block: 12px; gap: 12px; }
+.embedfoot { display: flex; justify-content: space-between; align-items: baseline; gap: 6px 16px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+.embedfoot a { color: var(--accent); font-weight: 600; text-decoration: none; }
+.embedfoot .brand-sm { font-family: var(--display); font-stretch: 85%; font-weight: 700; color: var(--ink-2); font-size: 13px; }
+/* Static mode: a fixed 1200px layout for images, with nothing that only makes sense on hover. */
+html.static body { width: 1200px; }
+html.static .page { max-width: none; width: 1200px; padding-inline: 24px; }
+html.static .tip, html.static .scrollhint, html.static .more { display: none !important; }
