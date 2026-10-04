@@ -3,6 +3,7 @@
  *   page.html?embed=<name>            only that chart, with a source line and a link to the full page
  *   &static=1                         fixed 1200px wide, no hover hints (used to make images)
  *   &theme=light|dark                 force a colour theme
+ *   &link=0                           no link to the full page (used inside articles)
  *
  * A page lists its embeddable blocks in data-embed attributes, e.g. <section data-embed="balance">.
  * After the page has drawn, it calls EMBED.finish(sourceText, [blocks to keep]). The final height is posted to the parent
@@ -47,7 +48,7 @@
       const foot = document.createElement("div");
       foot.className = "embedfoot";
       foot.innerHTML = `<span>${sourceText}</span>` +
-        (isStatic ? `<span class="brand-sm">India Oil &amp; Gas Atlas</span>`
+        (isStatic || q.get("link") === "0" ? `<span class="brand-sm">India Oil &amp; Gas Atlas</span>`
                   : `<a href="${full}" target="_blank" rel="noopener">Open the interactive version ↗</a>`);
       document.querySelector(".page").append(foot);
       postHeight();
