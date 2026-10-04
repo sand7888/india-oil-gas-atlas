@@ -13,6 +13,7 @@
   --c0: #b7d3f6; --c1: #6da7ec; --c2: #3987e5; --c3: #256abf; --c4: #104281;
   /* Oil balance: crude (imported, domestic) and one colour per product, the same wherever it appears. */
   --s1: #2a78d6; --s3: #1baf7a; --flow: #9aa6b2; --link-op: .45;
+  --d1: #0f7f58; --d2: #1baf7a; --d3: #5ccb9f; --d4: #9fe0c4;  /* domestic crude: ONGC, Oil India, contract blocks, condensate */
   --p-lpg: #eb6834; --p-petcoke: #4b5563; --p-diesel: #eda100; --p-petrol: #e87ba4; --p-jet: #008300; --p-naphtha: #4a3aa7; --p-other: #b3bcc6;
   --display: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
   --body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -24,6 +25,7 @@
     --line: #2a3036; --accent: #6da7ec; --accent-soft: #1b2a3c; --zero: #262b31; --hatch: #4a525b;
     --c0: #184f95; --c1: #256abf; --c2: #3987e5; --c3: #6da7ec; --c4: #b7d3f6;
     --s1: #3987e5; --s3: #199e70; --flow: #5d6873; --link-op: .62;
+    --d1: #127552; --d2: #199e70; --d3: #3fc490; --d4: #8adbb8;
     --p-lpg: #d95926; --p-petcoke: #9aa3ad; --p-diesel: #c98500; --p-petrol: #d55181; --p-jet: #008300; --p-naphtha: #9085e9; --p-other: #5d6873;
     color-scheme: dark;
   }
@@ -33,6 +35,7 @@
   --line: #2a3036; --accent: #6da7ec; --accent-soft: #1b2a3c; --zero: #262b31; --hatch: #4a525b;
   --c0: #184f95; --c1: #256abf; --c2: #3987e5; --c3: #6da7ec; --c4: #b7d3f6;
   --s1: #3987e5; --s3: #199e70; --flow: #5d6873; --link-op: .62;
+  --d1: #127552; --d2: #199e70; --d3: #3fc490; --d4: #8adbb8;
   --p-lpg: #d95926; --p-petcoke: #9aa3ad; --p-diesel: #c98500; --p-petrol: #d55181; --p-jet: #008300; --p-naphtha: #9085e9; --p-other: #5d6873;
   color-scheme: dark;
 }
