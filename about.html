@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>About &amp; Sources · India Oil &amp; Gas Atlas</title>
+<meta name="description" content="Where the India Oil & Gas Atlas data comes from, how it was prepared, and what the units mean.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23256abf'/%3E%3Cpath d='M16 6c-4 6-7 9.5-7 13a7 7 0 0 0 14 0c0-3.5-3-7-7-13z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=Public+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+/* Layout: a single reading column; the units glossary is a two-column definition grid. */
+.prose { max-width: 68ch; display: flex; flex-direction: column; gap: 28px; font-size: 15px; line-height: 1.6; }
+.prose h2 { margin: 0 0 8px; font-family: var(--display); font-stretch: 85%; font-weight: 700; font-size: 22px; line-height: 1.2; text-wrap: balance; }
+.prose p, .prose ul { margin: 0 0 10px; }
+.prose ul { padding-left: 20px; }
+.prose li { margin-bottom: 6px; }
+.prose li::marker { color: var(--muted); }
+.edition { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.edition b { font-weight: 600; }
+.edition span { color: var(--muted); font-size: 13px; }
+.units { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 18px; margin: 0; }
+.units dt { font-weight: 700; font-variant-numeric: tabular-nums; }
+.units dd { margin: 0; color: var(--ink-2); }
+.callout { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; color: var(--ink-2); }
+</style>
+</head>
+<body>
+<div class="page">
+  <nav class="site-nav" aria-label="Site">
+    <a class="brand" href="./"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="var(--accent)"/><path d="M16 6c-4 6-7 9.5-7 13a7 7 0 0 0 14 0c0-3.5-3-7-7-13z" fill="var(--surface)"/></svg>Oil &amp; Gas Atlas</a>
+    <div class="links"><a href="./">Map</a><a href="about.html" aria-current="page">About &amp; sources</a></div>
+  </nav>
+
+  <header>
+    <p class="eyebrow">About &amp; sources</p>
+    <h1>Where the numbers come from</h1>
+  </header>
+
+  <div class="prose">
+    <section>
+      <h2>Source</h2>
+      <p>All figures come from the <b>Oil and Gas Snapshot of States</b>, a quarterly report by the Petroleum Planning &amp; Analysis Cell (PPAC), Ministry of Petroleum and Natural Gas. The report is published on <a href="https://ppac.gov.in" target="_blank" rel="noopener">ppac.gov.in</a>.</p>
+      <div><div class="edition"><b>Vol. 2026-27, Edition I</b><span>April–June 2026 · published 13 August 2026</span></div></div>
+      <p class="callout">This site is independent. It is not affiliated with or endorsed by PPAC or the Ministry of Petroleum and Natural Gas. For official figures, refer to the original report.</p>
+    </section>
+
+    <section>
+      <h2>Notes for this edition</h2>
+      <ul><li>Figures are as of 30 June 2026 unless a note below says otherwise.</li><li>Total and rural population are Registrar General of India projections for 1 July 2026.</li><li>SGDP (constant prices) and per capita income are for FY 2024-25, except Goa, Manipur, Mizoram, Nagaland, Sikkim, Chandigarh and the Andaman &amp; Nicobar Islands (FY 2023-24) and Gujarat (FY 2022-23). Source: RBI Handbook of Statistics on Indian States.</li><li>City gas infrastructure (geographical areas, CNG stations, PNG connections) is as of 31 May 2026, as published by PNGRB.</li><li>State-wise gas production and consumption are provisional. CNG and PNG sales are apportioned using PPAC&#x27;s data for the second half of FY 2025-26.</li><li>Production, consumption and sales of petroleum products are monthly averages for April to June 2026.</li><li>Petrol and diesel retail prices and effective VAT rates are as of 1 July 2026. VAT and SGST collections cover FY 2025-26, as of 31 March 2026.</li><li>A city gas area that spans two states is counted once, under one state chosen by PPAC (for example, areas shared by Andhra Pradesh, Karnataka and Tamil Nadu are counted under Andhra Pradesh).</li><li>India&#x27;s total gas consumption includes 58.04 MMSCM used in cross-country pipeline transport that is not assigned to any state.</li></ul>
+    </section>
+
+    <section>
+      <h2>How the data was prepared</h2>
+      <ul>
+        <li>Each state's two-page table was read from the PDF by the position of every number on the page, then checked so that all 37 tables (India, 28 states, 8 union territories) carry the same 59 measures.</li>
+        <li>Values shown as “-” or “NA” in the report are treated as no data, not zero.</li>
+        <li><b>Per lakh people</b> divides a state's figure by its total population in lakh. It is offered only for totals such as volumes and counts, not for prices, percentages or figures that are already per person.</li>
+        <li><b>Map colours</b> split the states that report a value above zero into five bands with roughly equal numbers of states in each. States reporting zero are grey; states with no data are hatched.</li>
+        <li><b>Ranks</b> are out of the states and union territories with a value; tied values share a rank.</li>
+        <li><b>Share of India</b> divides the state's figure by the India total in the same report.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Units and terms</h2>
+      <dl class="units">
+        <dt>TMT</dt><dd>Thousand metric tonnes</dd>
+        <dt>MMTPA</dt><dd>Million metric tonnes per annum (refinery or terminal capacity)</dd>
+        <dt>MMSCM</dt><dd>Million standard cubic metres (natural gas)</dd>
+        <dt>KL</dt><dd>Kilolitres</dd>
+        <dt>Lakh / Cr</dt><dd>1 lakh = 100,000; 1 crore = 10 million</dd>
+        <dt>POL</dt><dd>Petroleum, oil and lubricants: all petroleum products combined</dd>
+        <dt>MS / HSD</dt><dd>Motor spirit (petrol) / high-speed diesel</dd>
+        <dt>LPG</dt><dd>Liquefied petroleum gas (cooking gas)</dd>
+        <dt>CGD / GA</dt><dd>City gas distribution / geographical area licensed for it</dd>
+        <dt>CNG / PNG</dt><dd>Compressed natural gas (vehicles) / piped natural gas (homes, shops, industry)</dd>
+        <dt>PMUY</dt><dd>Pradhan Mantri Ujjwala Yojana, the scheme for LPG connections to low-income households</dd>
+        <dt>DBC</dt><dd>Double-bottle connection (two LPG cylinders)</dd>
+        <dt>EBP / ESY</dt><dd>Ethanol Blended Petrol programme / ethanol supply year (November to October)</dd>
+        <dt>RSP</dt><dd>Retail selling price, in the state capital</dd>
+        <dt>SGDP</dt><dd>State gross domestic product</dd>
+      </dl>
+    </section>
+
+    <section>
+      <h2>Map</h2>
+      <p>State boundaries © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>, available under the Open Database License, via the vardhan-maps package, which adjusts them toward the Government of India's depiction. They are simplified for the web and approximate. This is not an official map of India.</p>
+    </section>
+  </div>
+
+  <footer><span>Data: PPAC, Oil and Gas Snapshot of States, Vol. 2026-27, Edition I.</span></footer>
+</div>
+</body>
+</html>
