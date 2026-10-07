@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diesel demand charts · India Oil &amp; Gas Atlas</title>
+<meta name="description" content="Charts on why diesel matters: its share of world oil use, what it is used for in India, how it tracks GDP, and how little its demand responds to price.">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23256abf'/%3E%3Cpath d='M16 6c-4 6-7 9.5-7 13a7 7 0 0 0 14 0c0-3.5-3-7-7-13z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=Public+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../assets/site.css">
+<style>
+.page { max-width: 1000px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.card h2 { margin: 0; font-family: var(--display); font-stretch: 85%; font-weight: 700; font-size: 22px; line-height: 1.15; text-wrap: balance; }
+.card .sub { margin: 4px 0 0; color: var(--ink-2); font-size: 14px; }
+.card h3 { margin: 0 0 8px; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.note { margin: 0; font-size: 12px; color: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.legend i.line { height: 3px; border-radius: 2px; width: 16px; }
+.legend i.hollow { background: var(--surface) !important; border: 2px solid var(--muted); border-radius: 50%; width: 10px; height: 10px; }
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px 28px; }
+@media (max-width: 720px) { .cols { grid-template-columns: minmax(0, 1fr); } }
+
+/* Horizontal bars: label, bar, value. Bars start at the baseline with a 4px rounded end. */
+.hbars { display: flex; flex-direction: column; gap: 4px; }
+.hb { display: grid; grid-template-columns: minmax(110px, 38%) minmax(0, 1fr); gap: 10px; align-items: center; font-size: 13px; padding: 2px 4px; border-radius: 6px; cursor: default; }
+.hb:hover, .hb:focus-visible { background: var(--accent-soft); outline: none; }
+.hb .lab { color: var(--ink-2); line-height: 1.25; }
+.hb.em .lab { color: var(--ink); font-weight: 700; }
+.hb .track { position: relative; height: 18px; display: flex; align-items: center; gap: 8px; }
+.hb .bar { height: 14px; border-radius: 0 4px 4px 0; flex: none; min-width: 2px; }
+.hb .val { color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 600; }
+.hb .val small { color: var(--muted); font-weight: 400; }
+.grouphead { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 700; margin: 8px 0 2px; display: flex; justify-content: space-between; }
+
+/* Then and now: two dots per row joined by a line. */
+.dumb { display: flex; flex-direction: column; gap: 10px; }
+.dr { display: grid; grid-template-columns: minmax(110px, 38%) minmax(0, 1fr); gap: 10px; align-items: center; font-size: 13px; }
+.dr .lab { color: var(--ink-2); }
+.dr svg { width: 100%; height: 40px; overflow: visible; }
+
+/* SVG charts are drawn at their real width so text stays readable on phones. */
+.svgwrap { position: relative; }
+.svgwrap svg { display: block; width: 100%; overflow: visible; }
+.axis text, .lbl { font: 500 12px var(--body); fill: var(--muted); font-variant-numeric: tabular-nums; }
+.axis line { stroke: var(--line); }
+.axis .base { stroke: var(--muted); }
+.end { font: 700 12px var(--body); fill: var(--ink); }
+.cross { stroke: var(--muted); stroke-dasharray: 3 3; }
+
+.tip { position: fixed; z-index: 10; pointer-events: none; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; box-shadow: 0 6px 20px rgba(0,0,0,.14); max-width: 280px; font-size: 13px; line-height: 1.4; }
+.tip b { display: block; margin-bottom: 2px; }
+.tip .s { color: var(--ink-2); font-size: 12px; }
+.srcs { margin: 0; padding-left: 18px; font-size: 13px; color: var(--ink-2); display: flex; flex-direction: column; gap: 4px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <nav class="site-nav" aria-label="Site">
+    <a class="brand" href="../"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="var(--accent)"/><path d="M16 6c-4 6-7 9.5-7 13a7 7 0 0 0 14 0c0-3.5-3-7-7-13z" fill="var(--surface)"/></svg>Oil &amp; Gas Atlas</a>
+    <div class="links"><a href="../posts/">Articles</a><a href="../">Map</a></div>
+  </nav>
+
+  <header>
+    <p class="eyebrow">Charts · diesel demand</p>
+    <h1>Why diesel matters</h1>
+    <p class="lede">The world's biggest oil product, what India uses it for, how it grows with the economy, and how little its use responds to price.</p>
+  </header>
+
+  <section class="card" data-embed="products" aria-labelledby="h-products">
+    <div><h2 id="h-products">Diesel is the world's biggest oil product</h2><p class="sub" id="s-products"></p></div>
+    <div class="cols">
+      <div><h3>World oil use by product, million barrels a day</h3><div class="hbars" id="products"></div></div>
+      <div><h3>Diesel's share of all oil use</h3><div class="hbars" id="regions"></div></div>
+    </div>
+    <p class="note" id="n-products"></p>
+  </section>
+
+  <section class="card" data-embed="enduse" aria-labelledby="h-enduse">
+    <div><h2 id="h-enduse">In India, diesel moves goods</h2><p class="sub" id="s-enduse"></p></div>
+    <div class="legend" id="lg-enduse"></div>
+    <div class="cols">
+      <div class="hbars" id="enduse"></div>
+      <div>
+        <h3>Then and now, share of diesel sold at fuel stations</h3>
+        <div class="legend" style="margin-bottom:8px"><span><i class="hollow"></i>2012–13</span><span><i style="background:var(--ink)"></i>2020–21</span></div>
+        <div class="dumb" id="thennow"></div>
+        <p class="note" style="margin-top:10px" id="n-cars"></p>
+      </div>
+    </div>
+    <p class="note" id="n-enduse"></p>
+  </section>
+
+  <section class="card" data-embed="gdp" aria-labelledby="h-gdp">
+    <div><h2 id="h-gdp">Diesel grows with the economy, but more slowly than it used to</h2><p class="sub" id="s-gdp"></p></div>
+    <div class="legend"><span><i class="line" style="background:var(--p-diesel)"></i>Diesel use</span><span><i class="line" style="background:var(--s1)"></i>GDP (real)</span></div>
+    <div class="svgwrap" id="gdp"></div>
+    <p class="note" id="n-gdp"></p>
+  </section>
+
+  <section class="card" data-embed="monthly" aria-labelledby="h-monthly">
+    <div><h2 id="h-monthly">Prices went up in May 2026. Diesel use kept growing</h2><p class="sub" id="s-monthly"></p></div>
+    <div><h3>Diesel use, million tonnes a month</h3>
+      <div class="legend" style="margin-bottom:6px"><span><i style="background:var(--c1)"></i>Before the price rise</span><span><i style="background:var(--p-diesel)"></i>From May 2026</span></div>
+      <div class="svgwrap" id="monthly"></div></div>
+    <div><h3>Retail price of diesel in Delhi, rupees a litre (monthly average)</h3><div class="svgwrap" id="price"></div></div>
+    <p class="note" id="n-monthly"></p>
+  </section>
+
+  <section class="card" data-embed="elasticity" aria-labelledby="h-elasticity">
+    <div><h2 id="h-elasticity">Diesel use barely responds to price</h2><p class="sub" id="s-elasticity"></p></div>
+    <div class="legend"><span><i style="background:var(--p-diesel);border-radius:50%"></i>Diesel</span><span><i style="background:var(--p-petrol);border-radius:50%"></i>Petrol</span><span><i class="line" style="background:var(--muted);height:2px"></i>95% range</span><span><i class="hollow"></i>Not statistically significant</span></div>
+    <div class="svgwrap" id="elasticity"></div>
+    <p class="note" id="n-elasticity"></p>
+  </section>
+
+  <section class="card" data-embed="states" aria-labelledby="h-states">
+    <div><h2 id="h-states">Where India burns its diesel</h2><p class="sub" id="s-states"></p></div>
+    <div class="hbars" id="states"></div>
+    <p class="note" id="n-states"></p>
+  </section>
+
+  <section aria-labelledby="h-src">
+    <h2 id="h-src" class="eyebrow" style="margin:0 0 8px">Sources</h2>
+    <ol class="srcs" id="srcs"></ol>
+  </section>
+</div>
+<div class="tip" id="tip" hidden></div>
+
+<script src="../assets/embed.js"></script>
+<script>
+const D = {"year":2024,"ei_file":"2026-10-06_EI_Stats_Review_all_data.xlsx","products":[{"label":"Diesel and gasoil","v":27.98,"share":27.6},{"label":"Petrol (gasoline)","v":25.0,"share":24.7},{"label":"LPG and ethane","v":15.06,"share":14.8},{"label":"Jet fuel and kerosene","v":7.8,"share":7.7},{"label":"Fuel oil","v":7.24,"share":7.1},{"label":"Naphtha","v":6.74,"share":6.7},{"label":"Everything else","v":11.6,"share":11.4}],"world_total_mbd":101.4,"regions":[{"label":"Europe","share":43.1,"diesel_mbd":6.09},{"label":"Africa","share":40.7,"diesel_mbd":1.86},{"label":"South and Central America","share":37.4,"diesel_mbd":2.37},{"label":"India","share":33.3,"diesel_mbd":1.87},{"label":"Russia and Central Asia (CIS)","share":33.3,"diesel_mbd":1.63},{"label":"World","share":27.6,"diesel_mbd":27.98},{"label":"Asia Pacific","share":25.1,"diesel_mbd":9.64},{"label":"China","share":22.5,"diesel_mbd":3.69},{"label":"Middle East","share":19.9,"diesel_mbd":1.96},{"label":"North America","share":19.1,"diesel_mbd":4.44}],"gdp":[{"year":1990,"diesel":57.2,"gdp":58.1,"diesel_kbd":464,"gdp_bn":465},{"year":1991,"diesel":59.5,"gdp":58.7,"diesel_kbd":482,"gdp_bn":470},{"year":1992,"diesel":65.0,"gdp":62.0,"diesel_kbd":527,"gdp_bn":496},{"year":1993,"diesel":67.7,"gdp":64.9,"diesel_kbd":549,"gdp_bn":519},{"year":1994,"diesel":73.6,"gdp":69.2,"diesel_kbd":597,"gdp_bn":554},{"year":1995,"diesel":77.9,"gdp":74.5,"diesel_kbd":632,"gdp_bn":596},{"year":1996,"diesel":89.4,"gdp":80.1,"diesel_kbd":725,"gdp_bn":641},{"year":1997,"diesel":93.3,"gdp":83.3,"diesel_kbd":757,"gdp_bn":667},{"year":1998,"diesel":96.3,"gdp":88.5,"diesel_kbd":781,"gdp_bn":708},{"year":1999,"diesel":102.7,"gdp":96.3,"diesel_kbd":833,"gdp_bn":771},{"year":2000,"diesel":100.0,"gdp":100.0,"diesel_kbd":811,"gdp_bn":801},{"year":2001,"diesel":96.7,"gdp":104.8,"diesel_kbd":784,"gdp_bn":839},{"year":2002,"diesel":97.5,"gdp":108.8,"diesel_kbd":791,"gdp_bn":871},{"year":2003,"diesel":95.8,"gdp":117.4,"diesel_kbd":777,"gdp_bn":940},{"year":2004,"diesel":102.7,"gdp":126.7,"diesel_kbd":833,"gdp_bn":1014},{"year":2005,"diesel":102.8,"gdp":136.7,"diesel_kbd":834,"gdp_bn":1094},{"year":2006,"diesel":108.1,"gdp":147.7,"diesel_kbd":877,"gdp_bn":1183},{"year":2007,"diesel":117.6,"gdp":159.0,"diesel_kbd":954,"gdp_bn":1273},{"year":2008,"diesel":129.7,"gdp":163.9,"diesel_kbd":1052,"gdp_bn":1312},{"year":2009,"diesel":140.4,"gdp":176.8,"diesel_kbd":1138,"gdp_bn":1416},{"year":2010,"diesel":150.0,"gdp":191.9,"diesel_kbd":1216,"gdp_bn":1536},{"year":2011,"diesel":160.2,"gdp":201.9,"diesel_kbd":1299,"gdp_bn":1616},{"year":2012,"diesel":173.2,"gdp":212.9,"diesel_kbd":1404,"gdp_bn":1705},{"year":2013,"diesel":173.7,"gdp":226.5,"diesel_kbd":1408,"gdp_bn":1813},{"year":2014,"diesel":174.6,"gdp":243.3,"diesel_kbd":1416,"gdp_bn":1948},{"year":2015,"diesel":183.9,"gdp":262.8,"diesel_kbd":1491,"gdp_bn":2104},{"year":2016,"diesel":193.7,"gdp":284.5,"diesel_kbd":1571,"gdp_bn":2277},{"year":2017,"diesel":200.7,"gdp":303.8,"diesel_kbd":1627,"gdp_bn":2432},{"year":2018,"diesel":209.7,"gdp":323.4,"diesel_kbd":1701,"gdp_bn":2589},{"year":2019,"diesel":213.1,"gdp":335.9,"diesel_kbd":1728,"gdp_bn":2689},{"year":2020,"diesel":182.2,"gdp":316.5,"diesel_kbd":1478,"gdp_bn":2534},{"year":2021,"diesel":195.5,"gdp":347.2,"diesel_kbd":1585,"gdp_bn":2779},{"year":2022,"diesel":214.6,"gdp":373.6,"diesel_kbd":1740,"gdp_bn":2991},{"year":2023,"diesel":225.1,"gdp":400.5,"diesel_kbd":1826,"gdp_bn":3206},{"year":2024,"diesel":230.5,"gdp":429.0,"diesel_kbd":1870,"gdp_bn":3434}],"growth":{"from":2000,"to":2024,"diesel_x":2.31,"gdp_x":4.29},"monthly":[{"month":"2023-04","hsd":7818,"ms":2877,"diesel_price":89.62},{"month":"2023-05","hsd":8217,"ms":3350,"diesel_price":89.62},{"month":"2023-06","hsd":7906,"ms":3152,"diesel_price":89.62},{"month":"2023-07","hsd":6885,"ms":2984,"diesel_price":89.62},{"month":"2023-08","hsd":6670,"ms":3093,"diesel_price":89.62},{"month":"2023-09","hsd":6493,"ms":3058,"diesel_price":89.62},{"month":"2023-10","hsd":7634,"ms":3140,"diesel_price":89.62},{"month":"2023-11","hsd":7525,"ms":3129,"diesel_price":89.62},{"month":"2023-12","hsd":7603,"ms":2990,"diesel_price":89.62},{"month":"2024-01","hsd":7424,"ms":3100,"diesel_price":89.62},{"month":"2024-02","hsd":7443,"ms":3023,"diesel_price":89.62},{"month":"2024-03","hsd":8007,"ms":3324,"diesel_price":88.52},{"month":"2024-04","hsd":7925,"ms":3285,"diesel_price":87.62},{"month":"2024-05","hsd":8412,"ms":3463,"diesel_price":87.62},{"month":"2024-06","hsd":7982,"ms":3296,"diesel_price":87.62},{"month":"2024-07","hsd":7193,"ms":3297,"diesel_price":87.62},{"month":"2024-08","hsd":6501,"ms":3360,"diesel_price":87.62},{"month":"2024-09","hsd":6369,"ms":3149,"diesel_price":87.62},{"month":"2024-10","hsd":7645,"ms":3412,"diesel_price":87.62},{"month":"2024-11","hsd":8166,"ms":3428,"diesel_price":87.67},{"month":"2024-12","hsd":8054,"ms":3320,"diesel_price":87.67},{"month":"2025-01","hsd":7738,"ms":3308,"diesel_price":87.67},{"month":"2025-02","hsd":7346,"ms":3174,"diesel_price":87.67},{"month":"2025-03","hsd":8075,"ms":3512,"diesel_price":87.67},{"month":"2025-04","hsd":8261,"ms":3449,"diesel_price":87.67},{"month":"2025-05","hsd":8592,"ms":3782,"diesel_price":87.67},{"month":"2025-06","hsd":8105,"ms":3522,"diesel_price":87.67},{"month":"2025-07","hsd":7356,"ms":3493,"diesel_price":87.67},{"month":"2025-08","hsd":6577,"ms":3544,"diesel_price":87.67},{"month":"2025-09","hsd":6786,"ms":3399,"diesel_price":87.67},{"month":"2025-10","hsd":7620,"ms":3665,"diesel_price":87.67},{"month":"2025-11","hsd":8557,"ms":3517,"diesel_price":87.67},{"month":"2025-12","hsd":8470,"ms":3555,"diesel_price":87.67},{"month":"2026-01","hsd":7993,"ms":3511,"diesel_price":87.67},{"month":"2026-02","hsd":7665,"ms":3369,"diesel_price":87.67},{"month":"2026-03","hsd":8726,"ms":3780,"diesel_price":87.67},{"month":"2026-04","hsd":8330,"ms":3684,"diesel_price":87.67},{"month":"2026-05","hsd":8725,"ms":3910,"diesel_price":90.57},{"month":"2026-06","hsd":8603,"ms":3784,"diesel_price":95.2},{"month":"2026-07","hsd":8093,"ms":3815,"diesel_price":95.2},{"month":"2026-08","hsd":7023,"ms":3836,"diesel_price":95.2}],"yoy":[{"month":"2024-04","pct":1.4},{"month":"2024-05","pct":2.4},{"month":"2024-06","pct":1.0},{"month":"2024-07","pct":4.5},{"month":"2024-08","pct":-2.5},{"month":"2024-09","pct":-1.9},{"month":"2024-10","pct":0.1},{"month":"2024-11","pct":8.5},{"month":"2024-12","pct":5.9},{"month":"2025-01","pct":4.2},{"month":"2025-02","pct":-1.3},{"month":"2025-03","pct":0.8},{"month":"2025-04","pct":4.2},{"month":"2025-05","pct":2.1},{"month":"2025-06","pct":1.5},{"month":"2025-07","pct":2.3},{"month":"2025-08","pct":1.2},{"month":"2025-09","pct":6.5},{"month":"2025-10","pct":-0.3},{"month":"2025-11","pct":4.8},{"month":"2025-12","pct":5.2},{"month":"2026-01","pct":3.3},{"month":"2026-02","pct":4.3},{"month":"2026-03","pct":8.1},{"month":"2026-04","pct":0.8},{"month":"2026-05","pct":1.5},{"month":"2026-06","pct":6.1},{"month":"2026-07","pct":10.0},{"month":"2026-08","pct":6.8}],"fy_totals":{"2023-24":{"hsd":89.6,"ms":37.2,"months":12},"2024-25":{"hsd":91.4,"ms":40.0,"months":12},"2025-26":{"hsd":94.7,"ms":42.6,"months":12},"2026-27":{"hsd":40.8,"ms":19.0,"months":5}},"price_last":"2026-10-05","price_file":"2026-10-06_PPAC_RSP_metro_05.10.2026.pdf","monthly_src":["PPAC, Domestic consumption of petroleum products (P), https://ppac.gov.in/consumption/products-wise, '000 tonnes; read from the web table for each financial year on 2026-10-06","PPAC 2026-10-06_PT_consumption_2026-27.xlsx"],"states":{"edition":"Vol. 2026-27, Edition I","period":"April–June 2026","india":102.6,"rows":[{"state":"Maharashtra","v":12.72,"share":12.4},{"state":"Uttar Pradesh","v":11.81,"share":11.5},{"state":"Karnataka","v":8.78,"share":8.6},{"state":"Gujarat","v":8.25,"share":8.0},{"state":"Rajasthan","v":6.87,"share":6.7},{"state":"Tamil Nadu","v":6.69,"share":6.5},{"state":"Madhya Pradesh","v":5.35,"share":5.2},{"state":"Haryana","v":4.86,"share":4.7},{"state":"Telangana","v":4.17,"share":4.1},{"state":"Andhra Pradesh","v":4.0,"share":3.9},{"state":"Odisha","v":3.73,"share":3.6},{"state":"Punjab","v":3.7,"share":3.6},{"state":"West Bengal","v":3.67,"share":3.6},{"state":"Bihar","v":3.07,"share":3.0},{"state":"Chhattisgarh","v":2.74,"share":2.7},{"state":"Kerala","v":2.41,"share":2.4},{"state":"Jharkhand","v":2.32,"share":2.3},{"state":"Assam","v":1.18,"share":1.2},{"state":"Uttarakhand","v":0.97,"share":0.9},{"state":"Jammu & Kashmir","v":0.91,"share":0.9},{"state":"Himachal Pradesh","v":0.85,"share":0.8},{"state":"Puducherry","v":0.61,"share":0.6},{"state":"Delhi","v":0.57,"share":0.6},{"state":"Meghalaya","v":0.41,"share":0.4},{"state":"Goa","v":0.31,"share":0.3},{"state":"Chandigarh","v":0.28,"share":0.3},{"state":"Arunachal Pradesh","v":0.27,"share":0.3},{"state":"Dadra & Nagar Haveli and Daman & Diu","v":0.19,"share":0.2},{"state":"Andaman & Nicobar Islands","v":0.19,"share":0.2},{"state":"Ladakh","v":0.14,"share":0.1},{"state":"Nagaland","v":0.13,"share":0.1},{"state":"Mizoram","v":0.13,"share":0.1},{"state":"Manipur","v":0.12,"share":0.1},{"state":"Tripura","v":0.1,"share":0.1},{"state":"Sikkim","v":0.1,"share":0.1},{"state":"Lakshadweep","v":0.02,"share":0.0}]},"enduse":{"period":"October 2020 to September 2021","basis":"All diesel sold in India: retail outlets and direct sales","unit":"% of diesel sold","source":"PPAC, All-India study on sectoral demand for petrol and diesel, final report (October 2020 - September 2021), conducted by CRISIL Risk & Infrastructure Solutions; Figure 17, End-use share of diesel (retail and direct)","url":"https://ppac.gov.in/uploads/whatsnew/1663838452_ExecutiveSummarySectoralConsumptionStudy.pdf","rows":[{"label":"Trucks (heavy and light)","v":55.4,"group":"transport"},{"label":"Private cars and SUVs","v":12.4,"group":"transport"},{"label":"Buses","v":5.9,"group":"transport"},{"label":"Taxis","v":2.9,"group":"transport"},{"label":"Railways","v":2.1,"group":"transport"},{"label":"Three-wheelers","v":1.2,"group":"transport"},{"label":"Aviation and shipping","v":0.8,"group":"transport"},{"label":"Industry","v":6.3,"group":"other"},{"label":"Agriculture","v":4.8,"group":"other"},{"label":"Power generators","v":1.6,"group":"other"},{"label":"Mobile towers","v":0.3,"group":"other"},{"label":"Others (fishing boats, resale, etc.)","v":6.3,"group":"other"}]},"then_now":{"basis":"Diesel sold through retail outlets","source":"PPAC, All-India study on sectoral demand for petrol and diesel (2020-21), foreword, comparing with the 2012-13 study","url":"https://ppac.gov.in/uploads/whatsnew/1663838452_ExecutiveSummarySectoralConsumptionStudy.pdf","rows":[{"label":"Trucks","before":33,"after":64},{"label":"Agriculture (tractors, pumps, generators)","before":14,"after":4.7}],"diesel_car_share":{"before":58,"after":17,"before_year":"FY2013","after_year":"FY2021","label":"Diesel's share of new passenger vehicle sales","source":"Same study, Figure 6"}},"world_trucks":{"text":"About half of the world's diesel is burned by road freight, which relies on diesel for more than 80% of its fuel.","source":"IEA, The Future of Trucks (2017)","url":"https://www.iea.org/reports/the-future-of-trucks"},"elasticities":{"note":"Long-run price and income elasticities of demand: the % change in fuel use for a 1% change in price or income.","rows":[{"group":"Emerging economies (76-83 countries)","fuel":"diesel","price":-0.24,"price_lo":-0.39,"price_hi":-0.091,"income":1.17,"sig":true,"src":"lh"},{"group":"Emerging economies (76-83 countries)","fuel":"petrol","price":-0.25,"price_lo":-0.36,"price_hi":-0.14,"income":1.0,"sig":true,"src":"lh"},{"group":"High-income Europe (24)","fuel":"diesel","price":-0.38,"price_lo":-0.7,"price_hi":-0.066,"income":2.12,"sig":true,"src":"lh"},{"group":"High-income Europe (24)","fuel":"petrol","price":-0.66,"price_lo":-0.92,"price_hi":-0.4,"income":0.72,"sig":true,"src":"lh"},{"group":"Other high-income (11)","fuel":"diesel","price":-0.15,"price_lo":-0.39,"price_hi":0.084,"income":0.9,"sig":false,"src":"lh"},{"group":"Other high-income (11)","fuel":"petrol","price":-0.87,"price_lo":-1.23,"price_hi":-0.51,"income":0.31,"sig":true,"src":"lh"},{"group":"India, 1970-2011","fuel":"diesel","price":-0.56,"income":1.02,"sig":true,"src":"agrawal"},{"group":"India, 1970-2011","fuel":"petrol","price":-0.85,"income":1.39,"sig":true,"src":"agrawal"}],"sources":{"lh":{"label":"Liddle and Huntington (2020), 118-country panel of road gasoline and diesel demand, long-run estimates with 95% intervals; as summarised in Huntington and Liddle, Stanford Energy Modeling Forum OP73, Table 2","url":"https://web.stanford.edu/group/emf-research/docs/occasional_papers/op73.pdf"},"agrawal":{"label":"Agrawal, India's Petroleum Demand: Empirical Estimations and Projections for the Future, IEG Working Paper 319 (2012), ARDL estimates on 1970-2011 data","url":"https://iegindia.org/upload/publication/Workpap/wp319.pdf"},"ghosh":{"label":"Ghosh, High speed diesel consumption and economic growth in India, Energy 35 (2010): long-run income elasticity 1.27, short-run 0.46; price elasticities statistically insignificant (1972-73 to 2005-06)","url":"https://www.sciencedirect.com/science/article/abs/pii/S0360544209005519"}}},"sources":[{"label":"Energy Institute, Statistical Review of World Energy 2025 (data to 2024): oil consumption by product group","url":"https://www.energyinst.org/statistical-review/resources-and-data-downloads"},{"label":"PPAC, domestic consumption of petroleum products (monthly)","url":"https://ppac.gov.in/consumption/products-wise"},{"label":"PPAC, daily retail selling prices of petrol and diesel in metro cities","url":"https://ppac.gov.in/retail-selling-price-rsp-of-petrol-diesel-and-domestic-lpg/rsp-of-petrol-and-diesel-in-metro-cities-since-16-6-2017"},{"label":"PPAC, Oil and Gas Snapshot of States, Vol. 2026-27, Edition I","url":"https://ppac.gov.in"},{"label":"PPAC / CRISIL, All-India study on sectoral demand for petrol and diesel (2020-21)","url":"https://ppac.gov.in/uploads/whatsnew/1663838452_ExecutiveSummarySectoralConsumptionStudy.pdf"},{"label":"IEA, The Future of Trucks (2017)","url":"https://www.iea.org/reports/the-future-of-trucks"},{"label":"World Bank, GDP (constant 2015 US$), India","url":"https://data.worldbank.org/indicator/NY.GDP.MKTP.KD?locations=IN"},{"label":"Liddle and Huntington (2020) via Stanford EMF OP73","url":"https://web.stanford.edu/group/emf-research/docs/occasional_papers/op73.pdf"},{"label":"Agrawal (2012), IEG Working Paper 319","url":"https://iegindia.org/upload/publication/Workpap/wp319.pdf"},{"label":"Ghosh (2010), Energy","url":"https://www.sciencedirect.com/science/article/abs/pii/S0360544209005519"}]};
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const f1 = (v) => v.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const f0 = (v) => Math.round(v).toLocaleString("en-US");
+const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const FULL = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const mlabel = (m) => `${MON[+m.slice(5) - 1]} ${m.slice(0, 4)}`;
+const NS = "http://www.w3.org/2000/svg";
+
+/* ---------- tooltip ---------- */
+const tip = $("tip");
+function showTip(html, x, y) {
+  tip.innerHTML = html; tip.hidden = false;
+  let left = x + 14, top = y + 14;
+  if (left + tip.offsetWidth > innerWidth - 8) left = x - tip.offsetWidth - 14;
+  if (top + tip.offsetHeight > innerHeight - 8) top = y - tip.offsetHeight - 14;
+  tip.style.left = Math.max(8, left) + "px"; tip.style.top = Math.max(8, top) + "px";
+}
+const hideTip = () => { tip.hidden = true; };
+document.addEventListener("pointerover", (e) => {
+  const el = e.target.closest("[data-tip]");
+  if (el) showTip(el.dataset.tip, e.clientX, e.clientY);
+});
+document.addEventListener("pointermove", (e) => { const el = e.target.closest("[data-tip]"); if (el) showTip(el.dataset.tip, e.clientX, e.clientY); });
+document.addEventListener("pointerout", (e) => { if (e.target.closest("[data-tip]")) hideTip(); });
+document.addEventListener("focusin", (e) => { const el = e.target.closest("[data-tip]"); if (el) { const r = el.getBoundingClientRect(); showTip(el.dataset.tip, r.left + r.width / 2, r.bottom); } });
+document.addEventListener("focusout", hideTip);
+
+/* A row of a horizontal bar chart. */
+function hbar({ label, v, max, color, val, tipHtml, em }) {
+  return `<div class="hb${em ? " em" : ""}" tabindex="0" data-tip="${esc(tipHtml)}"><span class="lab">${label}</span>` +
+    `<span class="track"><span class="bar" style="width:calc((100% - 92px) * ${v / max});background:${color}"></span><span class="val">${val}</span></span></div>`;
+}
+
+/* ---------- 1. products and regions ---------- */
+const P = D.products, diesel = P[0];
+$("s-products").textContent = `In ${D.year} the world used ${f1(D.world_total_mbd)} million barrels of oil a day. Diesel and gasoil were ${f1(diesel.v)} million of them, ${diesel.share}%, more than any other product.`;
+const pmax = Math.max(...P.map((p) => p.v));
+$("products").innerHTML = P.map((p) => hbar({
+  label: p.label, v: p.v, max: pmax, em: p.label.startsWith("Diesel"),
+  color: p.label.startsWith("Diesel") ? "var(--p-diesel)" : "var(--flow)",
+  val: `${f1(p.v)} <small>${p.share}%</small>`,
+  tipHtml: `<b>${p.label}</b>${f1(p.v)} million barrels a day<div class="s">${p.share}% of world oil use, ${D.year}</div>`,
+})).join("");
+const rmax = Math.max(...D.regions.map((r) => r.share));
+$("regions").innerHTML = D.regions.map((r) => hbar({
+  label: r.label, v: r.share, max: rmax, em: r.label === "India" || r.label === "World",
+  color: r.label === "India" ? "var(--p-diesel)" : "var(--c1)",
+  val: `${r.share}%`,
+  tipHtml: `<b>${r.label}</b>Diesel and gasoil: ${f1(r.diesel_mbd)} million barrels a day<div class="s">${r.share}% of all oil used, ${D.year}</div>`,
+})).join("");
+$("n-products").textContent = `Barrels a day, ${D.year}. Diesel and gasoil includes marine gasoil burned by ships; petrol includes aviation gasoline. Source: Energy Institute, Statistical Review of World Energy 2025.`;
+
+/* ---------- 2. end use ---------- */
+const E = D.enduse.rows;
+const trans = E.filter((r) => r.group === "transport"), other = E.filter((r) => r.group === "other");
+const sum = (a) => a.reduce((s, r) => s + r.v, 0);
+const emax = Math.max(...E.map((r) => r.v));
+const COL = { transport: "var(--s1)", other: "var(--s3)" };
+$("s-enduse").textContent = `Trucks burn ${E[0].v}% of India's diesel. Transport of all kinds takes ${f1(sum(trans))}%; industry, farms, generators and the rest ${f1(sum(other))}%.`;
+$("lg-enduse").innerHTML = `<span><i style="background:${COL.transport}"></i>Transport</span><span><i style="background:${COL.other}"></i>Everything else</span>`;
+const erow = (r) => hbar({ label: r.label, v: r.v, max: emax, color: COL[r.group], em: r.v > 50, val: `${f1(r.v)}%`,
+  tipHtml: `<b>${r.label}</b>${f1(r.v)}% of all diesel sold<div class="s">${D.enduse.period}</div>` });
+$("enduse").innerHTML =
+  `<div class="grouphead"><span>Transport</span><span>${f1(sum(trans))}%</span></div>` + trans.map(erow).join("") +
+  `<div class="grouphead"><span>Everything else</span><span>${f1(sum(other))}%</span></div>` + other.map(erow).join("");
+const TN = D.then_now;
+$("thennow").innerHTML = TN.rows.map((r) => {
+  const x = (v) => `${(v / 70) * 100}%`;
+  return `<div class="dr" tabindex="0" data-tip="${esc(`<b>${r.label}</b>${r.before}% in 2012–13, ${r.after}% in 2020–21<div class="s">Share of diesel sold at fuel stations</div>`)}">
+    <span class="lab">${r.label}</span>
+    <svg role="img" aria-label="${esc(`${r.label}: ${r.before}% to ${r.after}%`)}">
+      <line x1="${x(r.before)}" x2="${x(r.after)}" y1="15" y2="15" stroke="var(--muted)" stroke-width="2"/>
+      <circle cx="${x(r.before)}" cy="15" r="5" fill="var(--surface)" stroke="var(--muted)" stroke-width="2"/>
+      <circle cx="${x(r.after)}" cy="15" r="6" fill="var(--ink)"/>
+      <text class="lbl" x="${x(r.before)}" y="33" text-anchor="middle">${r.before}%</text>
+      <text class="end" x="${x(r.after)}" y="5" text-anchor="middle">${r.after}%</text>
+    </svg></div>`;
+}).join("");
+const car = TN.diesel_car_share;
+$("n-cars").textContent = `Cars are moving away from diesel: it powered ${car.before}% of new passenger vehicles sold in ${car.before_year} and ${car.after}% in ${car.after_year}.`;
+$("n-enduse").textContent = `All diesel sold, at fuel stations and directly to companies, ${D.enduse.period}. Source: PPAC, All-India study on sectoral demand for petrol and diesel (survey of about 3,000 fuel stations by CRISIL).`;
+
+/* ---------- SVG helpers ---------- */
+function svg(el, w, h) {
+  el.innerHTML = "";
+  const s = document.createElementNS(NS, "svg");
+  s.setAttribute("viewBox", `0 0 ${w} ${h}`); s.setAttribute("height", h);
+  el.append(s);
+  return s;
+}
+function add(parent, tag, attrs, text) {
+  const e = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+  if (text != null) e.textContent = text;
+  parent.append(e);
+  return e;
+}
+const niceTicks = (lo, hi, n) => {
+  const step0 = (hi - lo) / n, mag = 10 ** Math.floor(Math.log10(step0));
+  const step = [1, 2, 2.5, 5, 10].map((m) => m * mag).find((s) => s >= step0);
+  const out = [];
+  for (let t = Math.ceil(lo / step) * step; t <= hi + 1e-9; t += step) out.push(+t.toFixed(6));
+  return out;
+};
+
+/* ---------- 3. diesel and GDP, indexed ---------- */
+const G = D.gdp;
+const gr = D.growth;
+$("s-gdp").textContent = `Both indexed to ${gr.from} = 100. Between ${gr.from} and ${gr.to} India's economy grew ${f1(gr.gdp_x)} times and its diesel use ${f1(gr.diesel_x)} times.`;
+$("n-gdp").textContent = `Diesel and gasoil use from the Energy Institute (calendar years); GDP in constant 2015 US dollars from the World Bank.`;
+function drawGdp() {
+  const el = $("gdp"), W = el.clientWidth || 700, H = 300, m = { l: 40, r: 70, t: 12, b: 26 };
+  const s = svg(el, W, H);
+  const xs = G.map((d) => d.year), x0 = xs[0], x1 = xs[xs.length - 1];
+  const ymax = Math.max(...G.map((d) => Math.max(d.gdp, d.diesel)));
+  const X = (y) => m.l + ((y - x0) / (x1 - x0)) * (W - m.l - m.r), Y = (v) => H - m.b - (v / ymax) * (H - m.t - m.b);
+  const ax = add(s, "g", { class: "axis" });
+  for (const t of niceTicks(0, ymax, 4)) {
+    add(ax, "line", { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), class: t === 0 ? "base" : "" });
+    add(ax, "text", { x: m.l - 6, y: Y(t) + 4, "text-anchor": "end" }, t);
+  }
+  for (const y of xs.filter((y) => y % (W < 500 ? 10 : 5) === 0)) add(ax, "text", { x: X(y), y: H - 8, "text-anchor": "middle" }, y);
+  add(ax, "line", { x1: X(gr.from), x2: X(gr.from), y1: m.t, y2: H - m.b, class: "cross" });
+  for (const [k, col] of [["gdp", "var(--s1)"], ["diesel", "var(--p-diesel)"]]) {
+    add(s, "path", { d: G.map((d, i) => `${i ? "L" : "M"}${X(d.year)},${Y(d[k])}`).join(""), fill: "none", stroke: col, "stroke-width": 2, "stroke-linejoin": "round" });
+    const last = G[G.length - 1];
+    add(s, "circle", { cx: X(last.year), cy: Y(last[k]), r: 4, fill: col, stroke: "var(--surface)", "stroke-width": 2 });
+    add(s, "text", { class: "end", x: X(last.year) + 8, y: Y(last[k]) + 4 }, `${k === "gdp" ? "GDP" : "Diesel"} ${f0(last[k])}`);
+  }
+  const cross = add(s, "line", { class: "cross", y1: m.t, y2: H - m.b, visibility: "hidden" });
+  const hit = add(s, "rect", { x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b, fill: "transparent" });
+  hit.addEventListener("pointermove", (e) => {
+    const r = s.getBoundingClientRect(), px = (e.clientX - r.left) * (W / r.width);
+    const yr = Math.round(x0 + ((px - m.l) / (W - m.l - m.r)) * (x1 - x0)), d = G.find((g) => g.year === yr);
+    if (!d) return;
+    cross.setAttribute("x1", X(yr)); cross.setAttribute("x2", X(yr)); cross.setAttribute("visibility", "visible");
+    showTip(`<b>${yr}</b>Diesel ${f0(d.diesel)} (${f0(d.diesel_kbd)} thousand barrels a day)<br>GDP ${f0(d.gdp)} ($${f0(d.gdp_bn)} billion, 2015 prices)<div class="s">${gr.from} = 100</div>`, e.clientX, e.clientY);
+  });
+  hit.addEventListener("pointerleave", () => { cross.setAttribute("visibility", "hidden"); hideTip(); });
+}
+
+/* ---------- 4. monthly use and price: two panels on one time axis ---------- */
+const M = D.monthly;
+const lastM = M[M.length - 1], hike = M.find((r) => r.month === "2026-05");
+const yoyRecent = D.yoy.filter((r) => r.month >= "2026-06");
+const avgYoy = yoyRecent.reduce((s, r) => s + r.pct, 0) / (yoyRecent.length || 1);
+const pBefore = M.find((r) => r.month === "2026-04").diesel_price, pAfter = M.find((r) => r.month === "2026-06").diesel_price;
+$("s-monthly").textContent = `The Delhi price of diesel rose from ₹${pBefore.toFixed(2)} to ₹${pAfter.toFixed(2)} a litre in May 2026, up ${f1(100 * (pAfter / pBefore - 1))}%. From June to ${FULL[+lastM.month.slice(5) - 1]}, India still used ${f1(avgYoy)}% more diesel than a year earlier. Use dips every monsoon, when building and farm work slow down.`;
+$("n-monthly").textContent = `Source: PPAC, domestic consumption of petroleum products (provisional), and PPAC daily retail prices at Delhi. Prices were unchanged from March 2024 to May 2026 apart from a 5 paise rise in October 2024.`;
+function timeAxis(s, X, H, m, months) {
+  const ax = add(s, "g", { class: "axis" });
+  const W = +s.getAttribute("viewBox").split(" ")[2], every = W < 560 ? ["-04"] : ["-04", "-10"];
+  for (const r of months) if (every.some((e) => r.month.endsWith(e))) add(ax, "text", { x: X(r.month), y: H - 6, "text-anchor": "middle" }, mlabel(r.month));
+  return ax;
+}
+function drawMonthly() {
+  const el = $("monthly"), W = el.clientWidth || 700, H = 200, m = { l: 40, r: 10, t: 10, b: 24 };
+  const s = svg(el, W, H), n = M.length, step = (W - m.l - m.r) / n, bw = Math.max(3, step - 2);
+  const ymax = 10;
+  const X = (mo) => m.l + M.findIndex((r) => r.month === mo) * step + step / 2, Y = (v) => H - m.b - (v / ymax) * (H - m.t - m.b);
+  const ax = timeAxis(s, X, H, m, M);
+  for (const t of [0, 2, 4, 6, 8, 10]) { add(ax, "line", { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), class: t ? "" : "base" }); add(ax, "text", { x: m.l - 6, y: Y(t) + 4, "text-anchor": "end" }, t); }
+  for (const r of M) {
+    const v = r.hsd / 1000, yo = D.yoy.find((y) => y.month === r.month);
+    const b = add(s, "path", { d: `M${X(r.month) - bw / 2},${Y(0)}V${Y(v) + 3}q0,-3 3,-3h${bw - 6}q3,0 3,3V${Y(0)}Z`, fill: r.month >= "2026-05" ? "var(--p-diesel)" : "var(--c1)", tabindex: 0 });
+    b.dataset.tip = `<b>${mlabel(r.month)}</b>${f1(v)} million tonnes of diesel${yo ? `<br>${yo.pct > 0 ? "+" : ""}${f1(yo.pct)}% on a year earlier` : ""}${r.diesel_price ? `<div class="s">Delhi price ₹${r.diesel_price.toFixed(2)} a litre</div>` : ""}`;
+  }
+}
+function drawPrice() {
+  const el = $("price"), W = el.clientWidth || 700, H = 130, m = { l: 40, r: 10, t: 12, b: 24 };
+  const s = svg(el, W, H), n = M.length, step = (W - m.l - m.r) / n;
+  const lo = 85, hi = 97;
+  const X = (mo) => m.l + M.findIndex((r) => r.month === mo) * step + step / 2, Y = (v) => H - m.b - ((v - lo) / (hi - lo)) * (H - m.t - m.b);
+  const ax = timeAxis(s, X, H, m, M);
+  for (const t of [85, 90, 95]) { add(ax, "line", { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t) }); add(ax, "text", { x: m.l - 6, y: Y(t) + 4, "text-anchor": "end" }, t); }
+  const pts = M.filter((r) => r.diesel_price != null);
+  add(s, "path", { d: pts.map((r, i) => `${i ? "L" : "M"}${X(r.month)},${Y(r.diesel_price)}`).join(""), fill: "none", stroke: "var(--p-diesel)", "stroke-width": 2 });
+  for (const r of pts) {
+    const c = add(s, "circle", { cx: X(r.month), cy: Y(r.diesel_price), r: 5, fill: "transparent", tabindex: 0 });
+    c.dataset.tip = `<b>${mlabel(r.month)}</b>₹${r.diesel_price.toFixed(2)} a litre<div class="s">Delhi, monthly average</div>`;
+  }
+  const last = pts[pts.length - 1];
+  add(s, "text", { class: "end", x: X(last.month) - 4, y: Y(last.diesel_price) - 8, "text-anchor": "end" }, `₹${last.diesel_price.toFixed(2)}`);
+}
+
+/* ---------- 5. elasticities ---------- */
+const EL = D.elasticities.rows;
+const groups = [...new Set(EL.map((r) => r.group))];
+const nonOecd = EL.find((r) => r.fuel === "diesel" && r.group.startsWith("Emerging"));
+const indD = EL.find((r) => r.fuel === "diesel" && r.group.startsWith("India")), indP = EL.find((r) => r.fuel === "petrol" && r.group.startsWith("India"));
+const nonOecdP = EL.find((r) => r.fuel === "petrol" && r.group.startsWith("Emerging"));
+$("s-elasticity").textContent = `Long-run price elasticity: the % change in use when the price rises 1%. In emerging economies a 10% rise in the diesel price cuts diesel use by only about ${f1(-nonOecd.price * 10)}% over several years, much as for petrol (${f1(-nonOecdP.price * 10)}%). In rich countries and in India's own history, diesel responds less than petrol: in India about ${f1(-indD.price * 10)}% against ${f1(-indP.price * 10)}%.`;
+$("n-elasticity").textContent = `Sources: Liddle and Huntington (2020), panels of up to 118 countries, long-run estimates with 95% ranges; Agrawal (2012), India 1970–2011. A third India study (Ghosh, 2010) found no statistically significant price effect on diesel at all.`;
+function drawElasticity() {
+  // Wide: group names in a left column. Narrow (phones): each group name sits above its row.
+  const el = $("elasticity"), W = el.clientWidth || 700, narrow = W < 560;
+  const rowH = narrow ? 78 : 58, m = { l: narrow ? 12 : 220, r: narrow ? 12 : 20, t: 8, b: 46 };
+  const H = m.t + m.b + groups.length * rowH, s = svg(el, W, H);
+  const lo = -1.25, hi = 0.1, X = (v) => m.l + ((v - lo) / (hi - lo)) * (W - m.l - m.r);
+  const ax = add(s, "g", { class: "axis" });
+  for (const t of narrow ? [-1.2, -0.8, -0.4, 0] : [-1.2, -1, -0.8, -0.6, -0.4, -0.2, 0]) {
+    add(ax, "line", { x1: X(t), x2: X(t), y1: m.t, y2: H - m.b, class: t === 0 ? "base" : "" });
+    add(ax, "text", { x: X(t), y: H - 26, "text-anchor": "middle" }, t === 0 ? "0" : t.toFixed(1).replace("-", "−"));
+  }
+  add(ax, "text", { x: X(lo), y: H - 6, "text-anchor": "start" }, narrow ? "← bigger cut in use" : "← use falls more when the price rises");
+  add(ax, "text", { x: X(0), y: H - 6, "text-anchor": "end" }, narrow ? "smaller cut →" : "use barely changes →");
+  groups.forEach((g, i) => {
+    const top = m.t + i * rowH, yc = narrow ? top + 46 : top + rowH / 2;
+    if (narrow) add(s, "text", { class: "lbl", x: m.l, y: top + 14, style: "fill:var(--ink-2);font-weight:600" }, g);
+    else add(s, "text", { class: "lbl", x: m.l - 12, y: yc + 4, "text-anchor": "end", style: "fill:var(--ink-2)" }, g);
+    for (const [k, fuel] of [[-7, "diesel"], [7, "petrol"]]) {
+      const r = EL.find((e) => e.group === g && e.fuel === fuel);
+      if (!r) continue;
+      const y = yc + k, col = fuel === "diesel" ? "var(--p-diesel)" : "var(--p-petrol)";
+      if (r.price_lo != null) add(s, "line", { x1: X(Math.max(r.price_lo, lo)), x2: X(Math.min(r.price_hi, hi)), y1: y, y2: y, stroke: "var(--muted)", "stroke-width": 2, "stroke-linecap": "round" });
+      const c = add(s, "circle", { cx: X(r.price), cy: y, r: 6, fill: r.sig ? col : "var(--surface)", stroke: r.sig ? "var(--surface)" : col, "stroke-width": 2, tabindex: 0 });
+      add(s, "text", { class: "end", x: X(r.price), y: fuel === "diesel" ? y - 10 : y + 19, "text-anchor": "middle", style: "font-size:11px" }, r.price.toFixed(2).replace("-", "−"));
+      c.dataset.tip = `<b>${g}: ${fuel}</b>Price elasticity ${r.price.toFixed(2)}${r.price_lo != null ? ` (95% range ${r.price_lo.toFixed(2)} to ${r.price_hi.toFixed(2)})` : ""}<br>A 10% price rise cuts use by about ${f1(-r.price * 10)}%${r.sig ? "" : " (not statistically significant)"}<br>Income elasticity ${r.income.toFixed(2)}<div class="s">${r.src === "lh" ? "Liddle and Huntington (2020)" : "Agrawal (2012)"}</div>`;
+    }
+  });
+}
+
+/* ---------- 6. states ---------- */
+const S = D.states, topStates = S.rows.slice(0, 12), rest = S.rows.slice(12);
+const restV = rest.reduce((a, r) => a + r.v, 0);
+const top5 = S.rows.slice(0, 5).reduce((a, r) => a + r.share, 0);
+$("s-states").textContent = `India uses about ${f1(S.india)} million tonnes of diesel a year at the ${S.period} pace. Five states use ${f1(top5)}% of it.`;
+const smax = topStates[0].v;
+$("states").innerHTML = topStates.map((r) => hbar({ label: r.state, v: r.v, max: smax, color: "var(--p-diesel)", val: `${f1(r.v)} <small>${f1(r.share)}%</small>`,
+  tipHtml: `<b>${r.state}</b>${f1(r.v)} million tonnes a year<div class="s">${f1(r.share)}% of India's diesel use</div>` })).join("") +
+  `<div class="grouphead" style="text-transform:none;letter-spacing:0;font-weight:500;font-size:13px"><span>The other ${rest.length} states and union territories</span><span>${f1(restV)} million tonnes · ${f1(100 * restV / S.india)}%</span></div>`;
+$("n-states").textContent = `Monthly average for ${S.period} multiplied by 12. Source: PPAC, Oil and Gas Snapshot of States, ${S.edition}.`;
+
+$("srcs").innerHTML = D.sources.map((s) => `<li><a href="${s.url}" target="_blank" rel="noopener">${esc(s.label)}</a></li>`).join("");
+
+function drawAll() { drawGdp(); drawMonthly(); drawPrice(); drawElasticity(); }
+drawAll();
+let rt;
+addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(drawAll, 120); });
+
+// Each chart's own note names its source, so the embed adds no second source line.
+EMBED.finish("", EMBED.mode ? [EMBED.mode] : null);
+if (EMBED.mode) drawAll();
+</script>
+</body>
+</html>
